@@ -1,0 +1,164 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rdo-sa
+secrets:
+- name: rdo-sa
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: rdo-sa
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: rdo
+  name: rdo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rdo
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: rdo
+    spec:
+      serviceAccountName: rdo-sa
+      imagePullSecrets:
+      - name: av-ecr-private-registry
+      tolerations:
+      - key: "visibility"
+        operator: "Exists"
+        effect: "NoSchedule"
+      nodeSelector:
+        k8s.assemblyvoting.net/pool: public
+      containers:
+      - name: rdo-api
+        image: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/rdo-api:latest
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails s -b '0.0.0.0' -p 3011"]
+        imagePullPolicy: IfNotPresent
+        ports:
+          - protocol: TCP
+            containerPort: 3011
+        env:
+        - name: RAILS_ENV
+          value: development
+        - name: HOSTS
+          value: "localhost,rdo-api.test-deployment.assemblyvoting.net"
+        - name: REDIS_URL
+          value: "redis://rdo-redis:6382"
+        resources:
+          requests:
+            cpu: 300m
+            memory: 500Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi
+      - name: rdo-client
+        image: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/rdo-client:latest
+        command: ["/bin/sh", "-c"]
+        args: ["chown -R $$(stat -c %u .):$$(stat -c %u .) ./node_modules; npm run dev -- --host 0.0.0.0 --port 3012"]
+        imagePullPolicy: IfNotPresent
+        ports:
+          - protocol: TCP
+            containerPort: 3012
+        env:
+        - name: RAILS_ENV
+          value: development
+        - name: VITE_RDO_URL
+          value: "https://rdo-api.test-deployment.assemblyvoting.net"
+        resources:
+          requests:
+            cpu: 300m
+            memory: 500Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi
+      - name: redis
+        image: redis:7
+        args: ["--port", "6382"]
+        resources:
+          requests:
+            cpu: 300m
+            memory: 500Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rdo-api
+spec:
+  selector:
+    app: rdo
+  ports:
+  - name: http
+    port: 3011
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    external-dns.alpha.kubernetes.io/hostname: rdo-api.test-deployment.assemblyvoting.net
+  name: rdo-api
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: rdo-api.test-deployment.assemblyvoting.net
+    http:
+      paths:
+      - backend:
+          service:
+            name: rdo-api
+            port:
+              number: 3011
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - rdo-api.test-deployment.assemblyvoting.net
+    secretName: rdo-api-service
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rdo-client
+spec:
+  selector:
+    app: rdo
+  ports:
+  - name: http
+    port: 3012
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   annotations:
+#     cert-manager.io/cluster-issuer: letsencrypt-production
+#     external-dns.alpha.kubernetes.io/hostname: rdo-client.test-deployment.assemblyvoting.net
+#   name: rdo-client
+# spec:
+#   ingressClassName: nginx
+#   rules:
+#   - host: rdo-client.test-deployment.assemblyvoting.net
+#     http:
+#       paths:
+#       - backend:
+#           service:
+#             name: rdo-client
+#             port:
+#               number: 3012
+#         path: /
+#         pathType: Prefix
+#   tls:
+#   - hosts:
+#     - rdo-client.test-deployment.assemblyvoting.net
+#     secretName: rdo-client-service

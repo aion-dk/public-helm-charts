@@ -1,0 +1,75 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mailcatcher-sa
+secrets:
+- name: mailcatcher-sa
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mailcatcher-sa
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mailcatcher
+  name: mailcatcher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mailcatcher
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: mailcatcher
+    spec:
+      serviceAccountName: mailcatcher-sa
+      imagePullSecrets:
+      - name: av-ecr-private-registry
+      tolerations:
+      - key: "visibility"
+        operator: "Exists"
+        effect: "NoSchedule"
+      nodeSelector:
+        k8s.assemblyvoting.net/pool: public
+      containers:
+      - name: mailcatcher
+        image: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/mailcatcher:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+          - protocol: TCP
+            containerPort: 1080
+          - protocol: TCP
+            containerPort: 1025
+        env:
+        - name: RAILS_ENV
+          value: development
+        resources:
+          requests:
+            cpu: 300m
+            memory: 500Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailcatcher
+spec:
+  selector:
+    app: mailcatcher
+  ports:
+  - name: smtp
+    port: 1025
+    protocol: TCP
+    targetPort: 1025
+  - name: http
+    port: 1080
+    protocol: TCP
+    targetPort: 1080
