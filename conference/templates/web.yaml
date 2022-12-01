@@ -1,0 +1,329 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  namespace: "{{ .Release.Name }}"
+  name: conference-sa
+secrets:
+- name: conference-sa
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  namespace: "{{ .Release.Name }}"
+  name: conference-sa
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: conference
+  name: conference
+  namespace: "{{ .Release.Name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: conference
+  strategy: 
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: conference
+    spec:
+      serviceAccountName: conference-sa
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      tolerations:
+      - key: "visibility"
+        operator: "Exists"
+        effect: "NoSchedule"
+      nodeSelector:
+        k8s.assemblyvoting.net/pool: public
+      initContainers:
+      - name: web-init
+        image: "{{ .Values.conference.image.repository }}:{{ .Values.conference.image.tag }}"
+        imagePullPolicy: Always
+        command: ["bin/docker-entrypoint.sh"]
+        volumeMounts:
+        - mountPath: /usr/src/app/public/uploads/
+          name: public-uploads
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        - mountPath: /usr/src/app/shared/
+          name: shared
+        env:
+        - name: RAILS_ENV
+          value: production
+        - name: SECRET_KEY_BASE
+          {{- toYaml .Values.secretKeyBase | nindent 10 }}
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.web }}"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 200Mi
+          limits:
+            cpu: 500m
+            memory: 300Mi
+      containers:
+      - name: web
+        image: "{{ .Values.conference.image.repository }}:{{ .Values.conference.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails s -b 0.0.0.0 -p 3000"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/public/uploads/
+          name: public-uploads
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        ports:
+          - protocol: TCP
+            containerPort: 3000
+        env:
+        - name: ACTION_CABLE_ADAPTER
+          value: any_cable
+        - name: ANYCABLE_RPC_HOST
+          value: localhost:50051
+        - name: RAILS_ENV
+          value: production
+        - name: SECRET_KEY_BASE
+          {{- toYaml .Values.secretKeyBase | nindent 10 }}
+        - name: RAILS_SERVE_STATIC_FILES
+          value: "true"
+        - name: REDIS_URL
+          value: redis://localhost:6379
+        - name: CABLE_URL
+          value: "wss://conference.{{ .Release.Name }}.assemblyvoting.net/cable"
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.web }}"
+        resources:
+          requests:
+            cpu: 300m
+            memory: 200Mi
+          limits:
+            cpu: 500m
+            memory: 1000Mi
+      - name: delayed-job
+        image: "{{ .Values.conference.image.repository }}:{{ .Values.conference.image.tag }}"
+        command: ["bin/rails", "jobs:work"]
+        imagePullPolicy: Always
+        env:
+        - name: RAILS_ENV
+          value: production
+        - name: SECRET_KEY_BASE
+          {{- toYaml .Values.secretKeyBase | nindent 10 }}
+        - name: ACTION_CABLE_ADAPTER
+          value: any_cable
+        - name: ANYCABLE_RPC_HOST
+          value: localhost:50051
+        - name: REDIS_URL
+          value: redis://localhost:6379
+        - name: CABLE_URL
+          value: "wss://conference.{{ .Release.Name }}.assemblyvoting.net/cable"
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.web }}"
+        volumeMounts:
+        - mountPath: /usr/src/app/public/uploads/
+          name: public-uploads
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+      - name: anycable-rpc
+        image: "{{ .Values.conference.image.repository }}:{{ .Values.conference.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec anycable"]
+        env:
+        - name: SECRET_KEY_BASE
+          {{- toYaml .Values.secretKeyBase | nindent 10 }}
+        - name: ANYCABLE_REDIS_URL
+          value: redis://localhost:6379/1
+        - name: REDIS_URL
+          value: redis://localhost:6379
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.web }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.web }}"
+        ports:
+        - protocol: TCP
+          containerPort: 50051
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/public/uploads/
+          name: public-uploads
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        resources:
+          requests:
+            cpu: 50m
+            memory: 200Mi
+          limits:
+            cpu: 100m
+            memory: 300Mi
+      - name: anycable-ws
+        image: "{{ .Values.anycableWebSocket.image.repository }}:{{ .Values.anycableWebSocket.image.tag }}"
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: ANYCABLE_HOST
+          value: "0.0.0.0"
+        - name: ANYCABLE_RPC_HOST
+          value: localhost:50051
+        - name: ANYCABLE_REDIS_URL
+          value: redis://localhost:6379/1
+        - name: SELENIUM_REMOTE_URL
+          value: http://webdriver_chrome:4444/wd/hub
+        ports:
+        - protocol: TCP
+          containerPort: 8080
+        resources:
+          requests:
+            cpu: 50m
+            memory: 25Mi
+          limits:
+            cpu: 100m
+            memory: 50Mi
+      - name: redis
+        image: redis:6
+        ports:
+        - protocol: TCP
+          containerPort: 6379
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+      volumes:
+      - name: uploads
+        emptyDir:
+          sizeLimit: 500Mi
+      - name: public-uploads
+        emptyDir:
+          sizeLimit: 500Mi
+      - name: shared
+        emptyDir:
+          sizeLimit: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: conference
+  namespace: "{{ .Release.Name }}"
+spec:
+  selector:
+    app: conference
+  ports:
+  - name: web
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+  - name: anycable
+    port: 3001
+    protocol: TCP
+    targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: "{{ .Values.certificateIssuer }}"
+    external-dns.alpha.kubernetes.io/hostname: "conference.{{ .Release.Name }}.assemblyvoting.net"
+  name: conference
+  namespace: "{{ .Release.Name }}"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "conference.{{ .Release.Name }}.assemblyvoting.net"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: conference
+            port:
+              name: web
+      - path: /cable
+        pathType: Prefix
+        backend:
+          service:
+            name: conference
+            port:
+              name: anycable
+  tls:
+  - hosts:
+    - "conference.{{ .Release.Name }}.assemblyvoting.net"
+    secretName: conference-service

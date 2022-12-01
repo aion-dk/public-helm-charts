@@ -1,0 +1,141 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: trustee-service-sa
+  namespace: "{{ .Release.Name }}"
+secrets:
+- name: trustee-service-sa
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: trustee-service-sa
+  namespace: "{{ .Release.Name }}"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: trustee-service-orchestrators
+  namespace: "{{ .Release.Name }}"
+data:
+  orchestrators.yml: |
+    devbox:
+      name: conference_devbox
+      secret: qwertyqwerty
+      url: https://conference.{{ .Release.Name }}.assemblyvoting.net
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: trustee-service
+  name: trustee-service
+  namespace: "{{ .Release.Name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trustee-service
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: trustee-service
+    spec:
+      serviceAccountName: trustee-service-sa
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      tolerations:
+      - key: "visibility"
+        operator: "Exists"
+        effect: "NoSchedule"
+      nodeSelector:
+        k8s.assemblyvoting.net/pool: public
+      containers:
+      - name: trustee-service
+        image: "{{ .Values.trusteeService.image.repository }}:{{ .Values.trusteeService.image.tag }}"
+        command: ["bin/docker-start"]
+        imagePullPolicy: Always
+        ports:
+        - protocol: TCP
+          containerPort: 3000
+        env:
+        - name: RAILS_ENV
+          value: development
+        resources:
+          requests:
+            cpu: 50m
+            memory: 200Mi
+          limits:
+            cpu: 100m
+            memory: 768Mi
+        volumeMounts:
+        - name: orchestrators
+          mountPath: /usr/src/app/config/orchestrators.yml
+          subPath: orchestrators.yml
+      - name: trustee-service-job
+        image: "{{ .Values.trusteeService.image.repository }}:{{ .Values.trusteeService.image.tag }}"
+        command: ["bundle", "exec", "sidekiq"]
+        imagePullPolicy: Always
+        env:
+        - name: RAILS_ENV
+          value: development
+        resources:
+          requests:
+            cpu: 50m
+            memory: 200Mi
+          limits:
+            cpu: 100m
+            memory: 768Mi
+        volumeMounts:
+        - name: orchestrators
+          mountPath: /usr/src/app/config/orchestrators.yml
+          subPath: orchestrators.yml
+      - name: redis
+        image: redis:6
+        ports:
+        - protocol: TCP
+          containerPort: 6379
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+      volumes:
+      - name: orchestrators
+        configMap:
+          name: trustee-service-orchestrators
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trustee-service
+  namespace: "{{ .Release.Name }}"
+spec:
+  selector:
+    app: trustee-service
+  ports:
+  - name: http
+    port: 3000
+    protocol: TCP
+    targetPort: 3000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: "{{ .Release.Name }}"
+spec:
+  selector:
+    app: trustee-service
+  ports:
+  - name: redis
+    port: 6379
+    protocol: TCP
+    targetPort: 6379

@@ -1,0 +1,48 @@
+conference:
+  image:
+    repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/conference
+    tag: e2e-2262385699893215ec8dfa8f5c72209f1864c82f
+
+anycableWebSocket:
+  image:
+    repository: anycable/anycable-go
+    tag: 1.0-alpine
+
+dbb:
+  image:
+    repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/dbb
+    tag: dev-324f83228e06ab676541bdecb65949e1b5ff3f87
+
+dbas:
+  image:
+    repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/dbas
+    tag: 03710aae95bfa3c968a30ab206df229049ed3f4b
+
+trusteeService:
+  image:
+    repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/trustee-service-dev
+    tag: 1d4515538f5309fe6bee34ab7500e56e1de44ad7
+
+# These secret names must reflect those generated in the test-deployment/04-deployment
+# stage in (terraform-main)[https://github.com/aion-dk/terraform-main/blob/main/environments/exoscale-development/test-deployment/04-deployment/main.tf]
+databaseCredentials:
+  web: "conference-production-database-credentials"
+  dbb: "dbb-development-database-credentials"
+
+# SECRET_KEY_BASE used by Conference's web application.
+secretKeyBase:
+  valueFrom:
+    secretKeyRef:
+      key: SECRET_KEY_BASE
+      name: rails-secret-key-base
+
+# You can also use letesencrypt-staging to use staging certificates instead.
+# Note that staging certificates are not trusted, and therefore might fail
+# verification when accessed via browser, or from another service.
+certificateIssuer: "letsencrypt-production"
+
+# This is deployed as part of the [terraform-main](https://github.com/aion-dk/terraform-main) project
+# using the (terraform-ecr-pull-secrets)[https://github.com/aion-dk/terraform-ecr-pull-secrets] module
+# as part of pre-configuration of the namespace prior to deployment.
+imagePullSecrets:
+- name: av-ecr-private-registry
