@@ -49,5 +49,18 @@ EOF
 $ helm install -f my-overrides.yaml my-deployment-name .
 ```
 
+## First-time setup after deploying Conference.
+When deploying Conference for the first time to a fresh database, you will likely want to seed the database with a site. To do this, access the rails console of the `web` container of the `conference` deployment, and run the following command:
+```bash
+$ rails seed_e2e:sandbox_demo
+```
+While attached to the container, you'll also want to update the configured `Site` for the application to the publically accessible address of the Conference web application, for example:
+
+```bash
+$ rails -c
+> Site.first.update(host: "conference.test-deployment.assemblyvoting.net")
+```
+Obviously replace the URL above with the one for your deployment, generally defined as `conference.{namespace}.assemblyvoting.net`.
+
 ## Upgrading
 If you have already installed a release of a given name and want to update some of the values, you should use `helm upgrade` instead of `helm install`. The options and arguments are the same for both commands.
