@@ -19,6 +19,12 @@ va:
         secretKeyRef:
           key: VOTER_REGISTRY_API_KEY
           name: voter-registry-api-key
+
+vmb:
+  image:
+    repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/verify-my-ballot
+    tag: aaff20e7ff04192f8642b699959264fece65beb3
+
 svs:
   api:
     image:
