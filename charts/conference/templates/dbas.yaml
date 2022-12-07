@@ -34,12 +34,6 @@ spec:
       serviceAccountName: dbas-sa
       imagePullSecrets:
       - name: av-ecr-private-registry
-      tolerations:
-      - key: "visibility"
-        operator: "Exists"
-        effect: "NoSchedule"
-      nodeSelector:
-        k8s.assemblyvoting.net/pool: public
       containers:
       - name: dbas
         image: "{{ .Values.dbb.image.repository }}:{{ .Values.dbb.image.tag }}"
