@@ -23,4 +23,15 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/conference-0.1.1/conference-0.1.1.tgz
     version: 0.1.1
-generated: "2022-12-07T12:09:40.422750228Z"
+  helloworld:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-12-07T12:19:36.668935292Z"
+    description: A Helm chart for Kubernetes
+    digest: fb622657ebf0bc0ca9de203954a3b971a8db521ce8c36574cb3622bbf55f83b2
+    name: helloworld
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/helloworld-0.1.0/helloworld-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-12-07T12:19:36.668950592Z"
