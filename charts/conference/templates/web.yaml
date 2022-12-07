@@ -37,12 +37,6 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      tolerations:
-      - key: "visibility"
-        operator: "Exists"
-        effect: "NoSchedule"
-      nodeSelector:
-        k8s.assemblyvoting.net/pool: public
       initContainers:
       - name: web-init
         image: "{{ .Values.conference.image.repository }}:{{ .Values.conference.image.tag }}"
