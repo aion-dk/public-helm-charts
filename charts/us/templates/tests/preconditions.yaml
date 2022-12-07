@@ -1,0 +1,44 @@
+# This file runs a set of validation checks against the templates and the actual
+# state of Kubernetes to determine if all the preconditions for deployment are met.
+#
+# For example, the Conference deployment relies on the fact that a namespace with
+# a number of secrets required by the deployment have already been created.
+
+# Validate that a namespace by the name of .Release.Name is present
+{{ if empty (lookup "v1" "Namespace" "" .Release.Name) }}
+  {{ fail (cat "Namespace" .Release.Name "must be created before deploying Conference to it. See the documnetation in https://github.com/aion-dk/terraform-main for more information") }}
+{{ end }}
+
+# Validate that a secret with the name of $databaseCredentials.dbb is present in the namespace.
+{{ if empty (lookup "v1" "Secret" .Release.Name .Values.databaseCredentials.dbb) }}
+  {{ fail (cat "Database credentials" .Values.databaseCredentials.dbb "must be present in the" .Release.Name "namespace. See the documnetation in https://github.com/aion-dk/terraform-main for more information") }}
+{{ end }}
+
+# Validate tha tall imagePullSecrets are present in the namespace.
+{{ range .Values.imagePullSecrets }}
+  {{ $pullSecret := (lookup "v1" "Secret" $.Release.Name .name) }}
+  {{ if empty $pullSecret }}
+    {{ fail (cat "Image pull secret" .name "was not found in the namespace.") }}
+  {{ else }}
+    {{ if not (eq $pullSecret.type "kubernetes.io/dockerconfigjson") }}
+      {{ fail (cat "imagePullSecret" $pullSecret.metadata.name "mustbe of type 'kubernetes.io/dockerconfigjson', but is actually" $pullSecret.type)}}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+# Validate that the chosen certificate issuer exists.
+{{ if empty (lookup "cert-manager.io/v1" "ClusterIssuer" "" .Values.certificateIssuer) }}
+  {{ fail (cat "ClusterIssuer" .Values.certificateIssuer "does not exist.") }}
+{{ end }}
+
+# Validate that the secretKeyBase variable references an existing secret.
+{{ if not (empty .Values.secretKeyBase.valueFrom.secretKeyRef.name) }}
+  {{ $secret := (lookup "v1" "Secret" .Release.Name .Values.secretKeyBase.valueFrom.secretKeyRef.name) }}
+  {{ if empty $secret }}
+    {{ fail (cat "secretKeyBase references non-existent secret" .Values.secretKeyBase.valueFrom.secretKeyRef.name)}}
+  {{ else }}
+    {{ if empty (get $secret.data .Values.secretKeyBase.valueFrom.secretKeyRef.key)}}
+      {{ fail (cat "Secret" .Values.secretKeyBase.valueFrom.secretKeyRef.name "referenced by secretKeyBase does not have a field named" .Values.secretKeyBase.valueFrom.secretKeyRef.key "as defined by secretKeyBase.valueFrom.secretRef.key") }}
+    {{ end }}
+  {{ end }}
+{{ end }}
