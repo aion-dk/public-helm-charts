@@ -6,18 +6,23 @@
 
 # Validate that a namespace by the name of .Release.Name is present
 {{ if empty (lookup "v1" "Namespace" "" .Release.Name) }}
-  {{ fail (cat "Namespace" .Release.Name "must be created before deploying Conference to it. See the documnetation in https://github.com/aion-dk/terraform-main for more information") }}
+  {{ fail (cat "Namespace" .Release.Name "must be created before deploying Conference to it. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
 {{ end }}
 
 # Validate that a secret with the name of $databaseCredentials.dbb is present in the namespace.
 {{ if empty (lookup "v1" "Secret" .Release.Name .Values.databaseCredentials.dbb) }}
-  {{ fail (cat "Database credentials" .Values.databaseCredentials.dbb "must be present in the" .Release.Name "namespace. See the documnetation in https://github.com/aion-dk/terraform-main for more information") }}
+  {{ fail (cat "Database credentials" .Values.databaseCredentials.dbb "must be present in the" .Release.Name "namespace. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
 {{ end }}
 
 # Validate that a secret with the name of $databaseCredentials.otp is present in the namespace.
 {{ if empty (lookup "v1" "Secret" .Release.Name .Values.databaseCredentials.otp) }}
-  {{ fail (cat "Database credentials" .Values.databaseCredentials.otp "must be present in the" .Release.Name "namespace. See the documnetation in https://github.com/aion-dk/terraform-main for more information") }}
+  {{ fail (cat "Database credentials" .Values.databaseCredentials.otp "must be present in the" .Release.Name "namespace. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
 {{ end }}
+
+{{- include "key-pair" (list .Release.Name "va") -}}
+{{- include "key-pair" (list .Release.Name "ea") -}}
+{{- include "key-pair" (list .Release.Name "otp") -}}
+{{- include "key-pair" (list .Release.Name "avx") -}}
 
 # Validate tha tall imagePullSecrets are present in the namespace.
 {{ range .Values.imagePullSecrets }}
@@ -56,6 +61,18 @@
   {{ else }}
     {{ if empty (get $secret.data .Values.otp.peytzMailToken.valueFrom.secretKeyRef.key)}}
       {{ fail (cat "Secret" .Values.otp.peytzMailToken.valueFrom.secretKeyRef.name "referenced by otp.peytzMailToken does not have a field named" .Values.otp.peytzMailToken.valueFrom.secretKeyRef.key "as defined by otp.peytzMailToken.valueFrom.secretRef.key") }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+# Validate that the va.voterRegistry.apiKey variable references an existing secret.
+{{ if not (empty .Values.va.voterRegistry.apiKey.valueFrom.secretKeyRef.name) }}
+  {{ $secret := (lookup "v1" "Secret" .Release.Name .Values.va.voterRegistry.apiKey.valueFrom.secretKeyRef.name) }}
+  {{ if empty $secret }}
+    {{ fail (cat "va.voterRegistry.apiKey references non-existent secret" .Values.va.voterRegistry.apiKey.valueFrom.secretKeyRef.name)}}
+  {{ else }}
+    {{ if empty (get $secret.data .Values.va.voterRegistry.apiKey.valueFrom.secretKeyRef.key)}}
+      {{ fail (cat "Secret" .Values.va.voterRegistry.apiKey.valueFrom.secretKeyRef.name "referenced by va.voterRegistry.apiKey does not have a field named" .Values.va.voterRegistry.apiKey.valueFrom.secretKeyRef.key "as defined by va.voterRegistry.apiKey.valueFrom.secretRef.key") }}
     {{ end }}
   {{ end }}
 {{ end }}

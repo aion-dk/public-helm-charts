@@ -8,6 +8,18 @@ dbas:
     repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/dbas
     tag: 03710aae95bfa3c968a30ab206df229049ed3f4b
 
+va:
+  image:
+    repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/voter-authorizer
+    tag: cc7cfb6eaa8b347f8f71a367cea4d04e975a18cf
+  voterRegistry:
+    endpoint: https://wdgxz5zqf7.execute-api.us-east-1.amazonaws.com/development-v3-1-2/lookupVoterEmail
+    apiKey:
+      valueFrom:
+        secretKeyRef:
+          key: VOTER_REGISTRY_API_KEY
+          name: voter-registry-api-key
+
 otp:
   image:
     repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/one-time-password-provider
@@ -23,6 +35,7 @@ otp:
 databaseCredentials:
   dbb: "dbb-development-database-credentials"
   otp: "otp-provider-development-database-credentials"
+  va:  "va-development-database-credentials"
 
 # SECRET_KEY_BASE used by Conference's web application.
 secretKeyBase:

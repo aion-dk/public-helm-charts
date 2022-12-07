@@ -36,47 +36,9 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      tolerations:
-      - key: "visibility"
-        operator: "Exists"
-        effect: "NoSchedule"
-      nodeSelector:
-        k8s.assemblyvoting.net/pool: public
-      initContainers:
-      - image: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/va:latest
-        name: va-migrate
-        command: ["/bin/sh", "-c"]
-        args: ["bundle exec rails db:migrate"]
-        imagePullPolicy: IfNotPresent
-        volumeMounts:
-        - mountPath: /usr/src/app/uploads/
-          name: uploads
-        env:
-        - name: RAILS_ENV
-          value: development
-        - name: DB_HOST
-          valueFrom:
-            secretKeyRef:
-              key: host
-              name: va-development-database-credentials
-        - name: DB_PORT
-          valueFrom:
-            secretKeyRef:
-              key: port
-              name: va-development-database-credentials
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              key: username
-              name: va-development-database-credentials
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: password
-              name: va-development-database-credentialss
       containers:
       - name: va
-        image: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/va:latest
+        image: "{{ .Values.va.image.repository }}:{{ .Values.va.image.tag }}"
         command: ["/bin/sh", "-c"]
         args: ["sh -c \"bundle exec rails s -b '0.0.0.0' -p 3002\""]
         imagePullPolicy: IfNotPresent
@@ -87,37 +49,43 @@ spec:
         - name: RAILS_ENV
           value: development
         - name: HOSTS
-          value: "localhost,va.test-deployment.assemblyvoting.net"
+          value: "localhost,va.avx.{{ .Release.Name }}.assemblyvoting.net"
         - name: AVX_SITE_PUBLIC_KEY
-          value: "00000000000000000000000000000000"
+          valueFrom:
+            secretKeyRef:
+              key: public-key
+              name: avx-site-public-key
         - name: VA_SITE_PRIVATE_KEY
-          value: "00000000000000000000000000000000"
+          valueFrom:
+            secretKeyRef:
+              key: private-key
+              name: va-site-private-key
         - name: VOTER_REGISTRY_ENDPOINT
-          value: https://wdgxz5zqf7.execute-api.us-east-1.amazonaws.com/development-v3-1-2/lookupVoterEmail
+          value: {{ .Values.va.voterRegistry.endpoint }}
         - name: VOTER_REGISTRY_API_KEY
-          value: "00000000000000000000000000000000"
-        - name: OTP_PROVIDER_HOST
+          {{- toYaml .Values.va.voterRegistry.apiKey | nindent 10 }}
+        - name: OTP_URL
           value: "otp:3001"
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
               key: host
-              name: va-development-database-credentials
+              name: "{{ .Values.databaseCredentials.va }}"
         - name: DB_PORT
           valueFrom:
             secretKeyRef:
               key: port
-              name: va-development-database-credentials
+              name: "{{ .Values.databaseCredentials.va }}"
         - name: DB_USER
           valueFrom:
             secretKeyRef:
               key: username
-              name: va-development-database-credentials
+              name: "{{ .Values.databaseCredentials.va }}"
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
               key: password
-              name: va-development-database-credentials
+              name: "{{ .Values.databaseCredentials.va }}"
         resources:
           requests:
             cpu: 300m
@@ -143,13 +111,13 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-production
-    external-dns.alpha.kubernetes.io/hostname: va.test-deployment.assemblyvoting.net
+    cert-manager.io/cluster-issuer: "{{ .Values.certificateIssuer }}"
+    external-dns.alpha.kubernetes.io/hostname: "va.avx.{{ .Release.Name }}.assemblyvoting.net"
   name: va
 spec:
   ingressClassName: nginx
   rules:
-  - host: va.test-deployment.assemblyvoting.net
+  - host: "va.avx.{{ .Release.Name }}.assemblyvoting.net"
     http:
       paths:
       - backend:
@@ -161,5 +129,5 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - va.test-deployment.assemblyvoting.net
+    - "va.avx.{{ .Release.Name }}.assemblyvoting.net"
     secretName: va-service

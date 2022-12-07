@@ -97,8 +97,8 @@ spec:
         - name: OTP_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
-              key: public-key
-              name: otp-site-public-key
+              key: private-key
+              name: otp-site-private-key
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
