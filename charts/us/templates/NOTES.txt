@@ -1,6 +1,5 @@
-Conference has been deployed. You can access the service using these URLs:
+US has been deployed. You can access the service using these URLs:
 
-  Web Interface: https://conference.{{ .Release.Name }}.assemblyvoting.net
   DBB: https://dbb.{{ .Release.Name }}.assemblyvoting.net
   DBAS: https://dbas.{{ .Release.Name }}.assemblyvoting.net
 
