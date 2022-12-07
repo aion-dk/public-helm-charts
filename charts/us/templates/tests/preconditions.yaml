@@ -47,3 +47,15 @@
     {{ end }}
   {{ end }}
 {{ end }}
+
+# Validate that the otp.peytzMailToken variable references an existing secret.
+{{ if not (empty .Values.otp.peytzMailToken.valueFrom.secretKeyRef.name) }}
+  {{ $secret := (lookup "v1" "Secret" .Release.Name .Values.otp.peytzMailToken.valueFrom.secretKeyRef.name) }}
+  {{ if empty $secret }}
+    {{ fail (cat "otp.peytzMailToken references non-existent secret" .Values.otp.peytzMailToken.valueFrom.secretKeyRef.name)}}
+  {{ else }}
+    {{ if empty (get $secret.data .Values.otp.peytzMailToken.valueFrom.secretKeyRef.key)}}
+      {{ fail (cat "Secret" .Values.otp.peytzMailToken.valueFrom.secretKeyRef.name "referenced by otp.peytzMailToken does not have a field named" .Values.otp.peytzMailToken.valueFrom.secretKeyRef.key "as defined by otp.peytzMailToken.valueFrom.secretRef.key") }}
+    {{ end }}
+  {{ end }}
+{{ end }}

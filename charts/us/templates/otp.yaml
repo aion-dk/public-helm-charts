@@ -81,6 +81,8 @@ spec:
           value: "0000000000000000000000000000000000000000000000000000000000000000"
         - name: SECRET_KEY_BASE
           {{- toYaml .Values.secretKeyBase | nindent 10 }}
+        - name: PEYTZ_MAIL_TOKEN
+          {{- toYaml .Values.otp.peytzMailToken | nindent 10 }}
         - name: MAILER_STRATEGY
           value: "test"
         - name: SMTP_HOST
