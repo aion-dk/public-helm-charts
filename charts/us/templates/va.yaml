@@ -98,6 +98,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: va
+  namespace: "{{ .Release.Name }}"
 spec:
   selector:
     app: va
@@ -114,6 +115,7 @@ metadata:
     cert-manager.io/cluster-issuer: "{{ .Values.certificateIssuer }}"
     external-dns.alpha.kubernetes.io/hostname: "va.avx.{{ .Release.Name }}.assemblyvoting.net"
   name: va
+  namespace: "{{ .Release.Name }}"
 spec:
   ingressClassName: nginx
   rules:
