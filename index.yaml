@@ -3,6 +3,17 @@ entries:
   conference:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2022-12-07T12:09:40.422744328Z"
+    description: A complete Conference deployment including Conference, Trustee Service,
+      DBB and DBAS.
+    digest: 53487da87f7645bea043e6878d066fe155fccb968e36122aa14d6a408fcb1d08
+    name: conference
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/conference-0.1.2/conference-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2022-12-01T09:46:25.893278288Z"
     description: A complete Conference deployment including Conference, Trustee Service,
       DBB and DBAS.
@@ -12,4 +23,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/conference-0.1.1/conference-0.1.1.tgz
     version: 0.1.1
-generated: "2022-12-01T09:46:25.893290488Z"
+generated: "2022-12-07T12:09:40.422750228Z"
