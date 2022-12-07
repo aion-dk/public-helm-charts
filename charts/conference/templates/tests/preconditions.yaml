@@ -19,6 +19,8 @@
   {{ fail (cat "Database credentials" .Values.databaseCredentials.dbb "must be present in the" .Release.Name "namespace. See the documnetation in https://github.com/aion-dk/terraform-main for more information") }}
 {{ end }}
 
+{{- include "key-pair" (list .Release.Name "ea") -}}
+
 # Validate tha tall imagePullSecrets are present in the namespace.
 {{ range .Values.imagePullSecrets }}
   {{ $pullSecret := (lookup "v1" "Secret" $.Release.Name .name) }}
