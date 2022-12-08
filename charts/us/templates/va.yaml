@@ -126,7 +126,7 @@ spec:
           service:
             name: va
             port:
-              number: 3003
+              number: 3002
         path: /
         pathType: Prefix
   tls:

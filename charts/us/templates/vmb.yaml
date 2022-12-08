@@ -44,6 +44,8 @@ spec:
           - protocol: TCP
             containerPort: 3005
         env:
+        - name: NODE_ENV
+          value: production
         - name: REACT_APP_BASE_ELECTION_URL
           value: "https://dbb.{{ .Release.Name }}.assemblyvoting.net"
         - name: REACT_APP_STRICT
@@ -58,7 +60,7 @@ spec:
             memory: 500Mi
           limits:
             cpu: 500m
-            memory: 500Mi
+            memory: 2000Mi
 ---
 apiVersion: v1
 kind: Service

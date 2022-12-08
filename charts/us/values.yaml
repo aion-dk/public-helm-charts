@@ -45,12 +45,21 @@ otp:
         key: PEYTZ_MAIL_TOKEN
         name: peytz-mail-token
 
+avx:
+  provisioner:
+    apiUrl: ""
+    uiUrl: ""
+  image:
+    repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/avx
+    tag: dev-c1f9bc9b36a9bd3757365d4175821a80bc00728d
+
 # These secret names must reflect those generated in the test-deployment/04-deployment
-# stage in (terraform-main)[https://github.com/aion-dk/terraform-main/blob/main/environments/exoscale-development/test-deployment/04-deployment/main.tf]
+# stage in (terraform-main)[https://github.com/aion-dk/terraform-main/blob/main/environments/exoscale-development/dev-us-1/04-deployment/main.tf]
 databaseCredentials:
   dbb: "dbb-development-database-credentials"
   otp: "otp-provider-development-database-credentials"
-  va:  "va-development-database-credentials"
+  va:  "voter-authorizer-development-database-credentials"
+  avx: "avx-development-database-credentials"
 
 # SECRET_KEY_BASE used by Conference's web application.
 secretKeyBase:

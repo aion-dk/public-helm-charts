@@ -45,7 +45,7 @@ spec:
           containerPort: 3010
         env:
         - name: REACT_APP_BASE_ELECTION_URL
-          value: "https://dbb.{{ .Release.Name }}.assemblyvoting.net"
+          value: "https://dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
         - name: REACT_APP_STRICT
           value: "false"
         resources:
@@ -75,13 +75,13 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/cluster-issuer: "{{ .Values.certificateIssuer }}"
-    external-dns.alpha.kubernetes.io/hostname: "dbas.{{ .Release.Name }}.assemblyvoting.net"
+    external-dns.alpha.kubernetes.io/hostname: "dbas.avx.{{ .Release.Name }}.assemblyvoting.net"
   name: dbas
   namespace: "{{ .Release.Name }}"
 spec:
   ingressClassName: nginx
   rules:
-  - host: "dbas.{{ .Release.Name }}.assemblyvoting.net"
+  - host: "dbas.avx.{{ .Release.Name }}.assemblyvoting.net"
     http:
       paths:
       - backend:
@@ -93,5 +93,5 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - "dbas.{{ .Release.Name }}.assemblyvoting.net"
+    - "dbas.avx.{{ .Release.Name }}.assemblyvoting.net"
     secretName: dbas-service

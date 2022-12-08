@@ -19,6 +19,16 @@
   {{ fail (cat "Database credentials" .Values.databaseCredentials.otp "must be present in the" .Release.Name "namespace. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
 {{ end }}
 
+# Validate that a secret with the name of $databaseCredentials.va is present in the namespace.
+{{ if empty (lookup "v1" "Secret" .Release.Name .Values.databaseCredentials.va) }}
+  {{ fail (cat "Database credentials" .Values.databaseCredentials.va "must be present in the" .Release.Name "namespace. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
+{{ end }}
+
+# Validate that a secret with the name of $databaseCredentials.avx is present in the namespace.
+{{ if empty (lookup "v1" "Secret" .Release.Name .Values.databaseCredentials.avx) }}
+  {{ fail (cat "Database credentials" .Values.databaseCredentials.avx "must be present in the" .Release.Name "namespace. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
+{{ end }}
+
 {{- include "key-pair" (list .Release.Name "va") -}}
 {{- include "key-pair" (list .Release.Name "ea") -}}
 {{- include "key-pair" (list .Release.Name "otp") -}}

@@ -81,14 +81,18 @@ spec:
           value: "0000000000000000000000000000000000000000000000000000000000000000"
         - name: SECRET_KEY_BASE
           {{- toYaml .Values.secretKeyBase | nindent 10 }}
+        - name: MAILER_STRATEGY
+          value: "aion_mailer"
         - name: PEYTZ_MAIL_TOKEN
           {{- toYaml .Values.otp.peytzMailToken | nindent 10 }}
-        - name: MAILER_STRATEGY
-          value: "test"
         - name: SMTP_HOST
           value: "mailcatcher"
         - name: SMTP_PORT
           value: "1025"
+        - name: SMTP_USERNAME
+          value: "nouser"
+        - name: SMTP_PASSWORD
+          value: "nopassword"
         - name: VA_PUBLIC_KEY
           valueFrom:
             secretKeyRef:
@@ -121,11 +125,11 @@ spec:
               name: "{{ .Values.databaseCredentials.otp }}"
         resources:
           requests:
-            cpu: 300m
-            memory: 500Mi
+            cpu: 10m
+            memory: 50Mi
           limits:
-            cpu: 500m
-            memory: 500Mi
+            cpu: 50m
+            memory: 100Mi
 ---
 apiVersion: v1
 kind: Service
@@ -146,13 +150,13 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/cluster-issuer: "{{ .Values.certificateIssuer }}"
-    external-dns.alpha.kubernetes.io/hostname: "otp.{{ .Release.Name }}.assemblyvoting.net"
+    external-dns.alpha.kubernetes.io/hostname: "otp.avx.{{ .Release.Name }}.assemblyvoting.net"
   name: otp
   namespace: "{{ .Release.Name }}"
 spec:
   ingressClassName: nginx
   rules:
-  - host: "otp.{{ .Release.Name }}.assemblyvoting.net"
+  - host: "otp.avx.{{ .Release.Name }}.assemblyvoting.net"
     http:
       paths:
       - backend:
@@ -164,5 +168,5 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - "otp.{{ .Release.Name }}.assemblyvoting.net"
+    - "otp.avx.{{ .Release.Name }}.assemblyvoting.net"
     secretName: otp-service

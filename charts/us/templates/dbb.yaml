@@ -84,7 +84,7 @@ spec:
         - name: RAILS_ENV
           value: development
         - name: HOSTS
-          value: "localhost,dbb.{{ .Release.Name }}.assemblyvoting.net"
+          value: "localhost,dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
         - name: EA_SITE_PUBLIC_KEY
           valueFrom:
             secretKeyRef:
@@ -149,7 +149,7 @@ spec:
         - name: RAILS_ENV
           value: development
         - name: HOSTS
-          value: "localhost,dbb.{{ .Release.Name }}.assemblyvoting.net"
+          value: "localhost,dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
         - name: EA_SITE_PUBLIC_KEY
           valueFrom:
             secretKeyRef:
@@ -186,13 +186,13 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/cluster-issuer: "{{ .Values.certificateIssuer }}"
-    external-dns.alpha.kubernetes.io/hostname: "dbb.{{ .Release.Name }}.assemblyvoting.net"
+    external-dns.alpha.kubernetes.io/hostname: "dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
   name: dbb
   namespace: "{{ .Release.Name }}"
 spec:
   ingressClassName: nginx
   rules:
-  - host: "dbb.{{ .Release.Name }}.assemblyvoting.net"
+  - host: "dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
     http:
       paths:
       - backend:
@@ -204,5 +204,5 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - "dbb.{{ .Release.Name }}.assemblyvoting.net"
+    - "dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
     secretName: dbb-service

@@ -1,8 +1,9 @@
 US has been deployed. You can access the service using these URLs:
 
-  DBB: https://dbb.{{ .Release.Name }}.assemblyvoting.net
-  DBAS: https://dbas.{{ .Release.Name }}.assemblyvoting.net
-  OTP: https://otp.{{ .Release.Name }}.assemblyvoting.net
+  AVX: https://avx.{{ .Release.Name }}.assemblyvoting.net
+  DBB: https://dbb.avx.{{ .Release.Name }}.assemblyvoting.net
+  DBAS: https://dbas.avx.{{ .Release.Name }}.assemblyvoting.net
+  OTP: https://otp.avx.{{ .Release.Name }}.assemblyvoting.net
   VA: https://va.avx.{{ .Release.Name }}.assemblyvoting.net
 
 Give the deployment a few minutes to provision certificates and configure routing.
