@@ -1,0 +1,172 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otp-sa
+  namespace: "{{ .Release.Name }}"
+secrets:
+- name: otp-sa
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: otp-sa
+  namespace: "{{ .Release.Name }}"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: otp
+  name: otp
+  namespace: "{{ .Release.Name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: otp
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: otp
+    spec:
+      serviceAccountName: otp-sa
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+      - name: otp-migrate
+        image: "{{ .Values.otp.image.repository }}:{{ .Values.otp.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails db:migrate"]
+        imagePullPolicy: Always
+        env:
+        - name: RAILS_ENV
+          value: development
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.otp }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.otp }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.otp }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.otp }}"
+      containers:
+      - name: otp
+        image: "{{ .Values.otp.image.repository }}:{{ .Values.otp.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["sh -c \"bundle exec rails s -b '0.0.0.0' -p 3001\""]
+        imagePullPolicy: Always
+        ports:
+          - protocol: TCP
+            containerPort: 3001
+        env:
+        - name: RAILS_ENV
+          value: developments
+        - name: LOCKBOX_MASTER_KEY
+          value: "0000000000000000000000000000000000000000000000000000000000000000"
+        - name: SECRET_KEY_BASE
+          {{- toYaml .Values.secretKeyBase | nindent 10 }}
+        - name: MAILER_STRATEGY
+          value: "aion_mailer"
+        - name: PEYTZ_MAIL_TOKEN
+          {{- toYaml .Values.otp.peytzMailToken | nindent 10 }}
+        - name: SMTP_HOST
+          value: "mailcatcher"
+        - name: SMTP_PORT
+          value: "1025"
+        - name: SMTP_USERNAME
+          value: "nouser"
+        - name: SMTP_PASSWORD
+          value: "nopassword"
+        - name: VA_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: public-key
+              name: va-site-public-key
+        - name: OTP_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: private-key
+              name: otp-site-private-key
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.otp }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.otp }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.otp }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.otp }}"
+        resources:
+          requests:
+            cpu: 10m
+            memory: 50Mi
+          limits:
+            cpu: 50m
+            memory: 100Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otp
+  namespace: "{{ .Release.Name }}"
+spec:
+  selector:
+    app: otp
+  ports:
+  - name: http
+    port: 3001
+    protocol: TCP
+    targetPort: 3001
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: "{{ .Values.certificateIssuer }}"
+    external-dns.alpha.kubernetes.io/hostname: "otp.avx.{{ .Release.Name }}.assemblyvoting.net"
+  name: otp
+  namespace: "{{ .Release.Name }}"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "otp.avx.{{ .Release.Name }}.assemblyvoting.net"
+    http:
+      paths:
+      - backend:
+          service:
+            name: otp
+            port:
+              number: 3001
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - "otp.avx.{{ .Release.Name }}.assemblyvoting.net"
+    secretName: otp-service

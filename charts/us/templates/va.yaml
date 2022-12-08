@@ -1,0 +1,135 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: va-sa
+  namespace: "{{ .Release.Name }}"
+secrets:
+- name: va-sa
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: va-sa
+  namespace: "{{ .Release.Name }}"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: va
+  name: va
+  namespace: "{{ .Release.Name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: va
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: va
+    spec:
+      serviceAccountName: va-sa
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: va
+        image: "{{ .Values.va.image.repository }}:{{ .Values.va.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["sh -c \"bundle exec rails s -b '0.0.0.0' -p 3002\""]
+        imagePullPolicy: IfNotPresent
+        ports:
+          - protocol: TCP
+            containerPort: 3002
+        env:
+        - name: RAILS_ENV
+          value: development
+        - name: HOSTS
+          value: "localhost,va.avx.{{ .Release.Name }}.assemblyvoting.net"
+        - name: AVX_SITE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: public-key
+              name: avx-site-public-key
+        - name: VA_SITE_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: private-key
+              name: va-site-private-key
+        - name: VOTER_REGISTRY_ENDPOINT
+          value: {{ .Values.va.voterRegistry.endpoint }}
+        - name: VOTER_REGISTRY_API_KEY
+          {{- toYaml .Values.va.voterRegistry.apiKey | nindent 10 }}
+        - name: OTP_URL
+          value: "otp:3001"
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.va }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.va }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.va }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.va }}"
+        resources:
+          requests:
+            cpu: 300m
+            memory: 500Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: va
+  namespace: "{{ .Release.Name }}"
+spec:
+  selector:
+    app: va
+  ports:
+  - name: http
+    port: 3002
+    protocol: TCP
+    targetPort: 3002
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: "{{ .Values.certificateIssuer }}"
+    external-dns.alpha.kubernetes.io/hostname: "va.avx.{{ .Release.Name }}.assemblyvoting.net"
+  name: va
+  namespace: "{{ .Release.Name }}"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "va.avx.{{ .Release.Name }}.assemblyvoting.net"
+    http:
+      paths:
+      - backend:
+          service:
+            name: va
+            port:
+              number: 3002
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - "va.avx.{{ .Release.Name }}.assemblyvoting.net"
+    secretName: va-service

@@ -1,0 +1,15 @@
+US has been deployed. You can access the service using these URLs:
+
+  AVX: https://avx.{{ .Release.Name }}.assemblyvoting.net
+  DBB: https://dbb.avx.{{ .Release.Name }}.assemblyvoting.net
+  DBAS: https://dbas.avx.{{ .Release.Name }}.assemblyvoting.net
+  OTP: https://otp.avx.{{ .Release.Name }}.assemblyvoting.net
+  VA: https://va.avx.{{ .Release.Name }}.assemblyvoting.net
+
+Give the deployment a few minutes to provision certificates and configure routing.
+
+If this is a first-time deployment, you might have to take some manual steps to configure the Site and seed the database.
+
+To check the status of the deployment use the following command
+
+  kubectl get pods -n {{ .Release.Name }}
