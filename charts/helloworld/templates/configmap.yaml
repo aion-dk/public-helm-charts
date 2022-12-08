@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: test-sops
 data:
-    decrypted: {{ .Values.sops || default "not set" }} 
+  decrypted: "{{ .Values.sops | default "not set" }} "

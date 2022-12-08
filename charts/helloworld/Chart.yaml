@@ -26,8 +26,6 @@ appVersion: "1.16.0"
 
 annotations:
   artifacthub.io/changes: |
-  - kind: added
-    description: Support for Tekton pipelines
-    links:
-    - name: Github Issue
-    url: https://github.com/artifacthub/hub/issues/1485  
+    - kind: added
+      description: Added support for test of sops
+    
