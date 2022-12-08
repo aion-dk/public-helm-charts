@@ -30,10 +30,6 @@ svs:
     image:
       repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/svs-api
       tag: dev-ec9e4ef1f86678f87fc8b7cc39507065fdaa7da9
-  client:
-    image:
-      repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/svs-client
-      tag: dev-ec9e4ef1f86678f87fc8b7cc39507065fdaa7da9
 
 otp:
   image:

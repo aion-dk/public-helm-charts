@@ -59,31 +59,6 @@ spec:
           limits:
             cpu: 500m
             memory: 500Mi
-      - name: svs-client
-        image: "{{ .Values.svs.client.image.repository }}:{{ .Values.svs.client.image.tag }}"
-        command: ["bin/docker-entrypoint"]
-        args: ["npm", "run", "dev:docker"]
-        imagePullPolicy: Always
-        ports:
-          - protocol: TCP
-            containerPort: 8002
-        resources:
-          requests:
-            cpu: 300m
-            memory: 500Mi
-          limits:
-            cpu: 500m
-            memory: 500Mi
-      - name: redis
-        image: redis:7
-        args: ["--port", "6382"]
-        resources:
-          requests:
-            cpu: 300m
-            memory: 500Mi
-          limits:
-            cpu: 500m
-            memory: 500Mi
 ---
 apiVersion: v1
 kind: Service
@@ -122,41 +97,3 @@ spec:
   - hosts:
     - "api.svs.{{ .Release.Name }}.assemblyvoting.net"
     secretName: svs-api-service
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: svs-client
-  namespace: "{{ .Release.Name }}"
-spec:
-  selector:
-    app: svs
-  ports:
-  - name: http
-    port: 8002
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-production
-    external-dns.alpha.kubernetes.io/hostname: "client.svs.{{ .Release.Name }}.assemblyvoting.net"
-  name: svs-client
-  namespace: "{{ .Release.Name }}"
-spec:
-  ingressClassName: nginx
-  rules:
-  - host: "client.svs.{{ .Release.Name }}.assemblyvoting.net"
-    http:
-      paths:
-      - backend:
-          service:
-            name: svs-client
-            port:
-              number: 8002
-        path: /
-        pathType: Prefix
-  tls:
-  - hosts:
-    - "client.svs.{{ .Release.Name }}.assemblyvoting.net"
-    secretName: svs-client-service
