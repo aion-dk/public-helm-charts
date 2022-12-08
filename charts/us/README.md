@@ -1,4 +1,4 @@
-# Conference Helm Chart
+# US (AVX) Helm Chart
 This is a helm chart used to deploy an entire US service collection, including:
 * AVX
 * SVS
@@ -14,7 +14,7 @@ Release names must be unique within the cluster, and map 1-to-1 to a namespace w
 In order to deploy this helm chart, you will need to have [helm](https://helm.sh) 3 or newer installed.
 
 ## Prerequisites
-Deploying this chart requires some preparation. The chart requires a namespace containing a number of secrets to be present ahead of time. You can to create the requisite infrastructure, namespace and secrets using the exoscale `us-deployment` example in the [terraform-main](https://github.com/aion-dk/terraform-main) project.
+Deploying this chart requires some preparation. The chart requires a namespace containing a number of secrets to be present ahead of time. You can to create the requisite infrastructure, namespace and secrets using the exoscale `dev-us-1` example in the [terraform-main](https://github.com/aion-dk/terraform-main) project.
 
 The helm chart contains a number of precondition checks, which will fail if the requirements aren't met.
 
