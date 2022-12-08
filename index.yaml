@@ -24,6 +24,20 @@ entries:
     - https://github.com/aion-dk/public-helm-charts/releases/download/conference-0.1.1/conference-0.1.1.tgz
     version: 0.1.1
   helloworld:
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
+          description: Added support for test of sops
+    apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-12-08T11:50:46.279534091Z"
+    description: A Helm chart for Kubernetes
+    digest: e9616403e8b202fc67db1618c301d5f4a9a95a3bb5b14eac4bb2f53f2a0ef1cd
+    name: helloworld
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/helloworld-0.2.0/helloworld-0.2.0.tgz
+    version: 0.2.0
   - apiVersion: v2
     appVersion: 1.16.0
     created: "2022-12-07T12:19:36.668935292Z"
@@ -34,4 +48,16 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/helloworld-0.1.0/helloworld-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-07T12:19:36.668950592Z"
+  us:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-12-08T11:50:46.421229276Z"
+    description: A complete US deployment including AVX, SVS, DBB, DBAS, VMB, VA and
+      OTP.
+    digest: 3955c2ca6c42bdbe40c2cb780b40b2599b22096bdb85d3b806cd7b563486a763
+    name: us
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-12-08T11:50:46.421396174Z"
