@@ -20,8 +20,8 @@ dbas:
 
 trusteeService:
   image:
-    repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/trustee-service-dev
-    tag: 1d4515538f5309fe6bee34ab7500e56e1de44ad7
+    repository: public.ecr.aws/assembly-voting/trustee-service
+    tag: c80feb7edab1215fce84c541cd68a5c5776104cb
 
 # These secret names must reflect those generated in the test-deployment/04-deployment
 # stage in (terraform-main)[https://github.com/aion-dk/terraform-main/blob/main/environments/exoscale-development/test-deployment/04-deployment/main.tf]

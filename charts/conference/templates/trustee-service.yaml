@@ -64,7 +64,7 @@ spec:
           containerPort: 3000
         env:
         - name: RAILS_ENV
-          value: development
+          value: production
         resources:
           requests:
             cpu: 50m
@@ -82,7 +82,7 @@ spec:
         imagePullPolicy: Always
         env:
         - name: RAILS_ENV
-          value: development
+          value: production
         resources:
           requests:
             cpu: 50m
