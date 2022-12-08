@@ -1,0 +1,208 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: dbb-sa
+  namespace: "{{ .Release.Name }}"
+secrets:
+- name: dbb-sa
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: dbb-sa
+  namespace: "{{ .Release.Name }}"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dbb
+  name: dbb
+  namespace: "{{ .Release.Name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dbb
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: dbb
+    spec:
+      serviceAccountName: dbb-sa
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+      - name: dbb-migrate
+        image: "{{ .Values.dbb.image.repository }}:{{ .Values.dbb.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails db:migrate"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        - name: RAILS_ENV
+          value: development
+      containers:
+      - name: dbb
+        image: "{{ .Values.dbb.image.repository }}:{{ .Values.dbb.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails s -b '0.0.0.0' -p 3003"]
+        imagePullPolicy: Always
+        ports:
+          - protocol: TCP
+            containerPort: 3003
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: RAILS_ENV
+          value: development
+        - name: HOSTS
+          value: "localhost,dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+        - name: EA_SITE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: public-key
+              name: ea-site-public-key
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        resources:
+          requests:
+            cpu: 50m
+            memory: 200Mi
+          limits:
+            cpu: 100m
+            memory: 300Mi
+      - name: dbb-jobs
+        image: "{{ .Values.dbb.image.repository }}:{{ .Values.dbb.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails jobs:work"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.dbb }}"
+        - name: RAILS_ENV
+          value: development
+        - name: HOSTS
+          value: "localhost,dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+        - name: EA_SITE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: public-key
+              name: ea-site-public-key
+        resources:
+          requests:
+            cpu: 50m
+            memory: 200Mi
+          limits:
+            cpu: 100m
+            memory: 300Mi
+      volumes:
+      - name: uploads
+        emptyDir:
+          sizeLimit: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dbb
+  namespace: "{{ .Release.Name }}"
+spec:
+  selector:
+    app: dbb
+  ports:
+  - name: http
+    port: 3003
+    protocol: TCP
+    targetPort: 3003
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: "{{ .Values.certificateIssuer }}"
+    external-dns.alpha.kubernetes.io/hostname: "dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+  name: dbb
+  namespace: "{{ .Release.Name }}"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+    http:
+      paths:
+      - backend:
+          service:
+            name: dbb
+            port:
+              number: 3003
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - "dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+    secretName: dbb-service

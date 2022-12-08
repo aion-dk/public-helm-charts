@@ -1,0 +1,101 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vmb-sa
+  namespace: "{{ .Release.Name }}"
+secrets:
+- name: vmb-sa
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vmb-sa
+  namespace: "{{ .Release.Name }}"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: vmb
+  name: vmb
+  namespace: "{{ .Release.Name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vmb
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: vmb
+    spec:
+      serviceAccountName: vmb-sa
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: vmb
+        image: "{{ .Values.vmb.image.repository }}:{{ .Values.vmb.image.tag }}"
+        imagePullPolicy: Always
+        ports:
+          - protocol: TCP
+            containerPort: 3005
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: REACT_APP_BASE_ELECTION_URL
+          value: "https://dbb.{{ .Release.Name }}.assemblyvoting.net"
+        - name: REACT_APP_STRICT
+          value: "false"
+        - name: REACT_APP_TIMEOUT_REMINDER_TIME
+          value: "5"
+        - name: REACT_APP_TIMEOUT_RETRIES
+          value: "30"
+        resources:
+          requests:
+            cpu: 300m
+            memory: 500Mi
+          limits:
+            cpu: 500m
+            memory: 2000Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vmb
+  namespace: "{{ .Release.Name }}"
+spec:
+  selector:
+    app: vmb
+  ports:
+  - name: http
+    port: 3005
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    external-dns.alpha.kubernetes.io/hostname: "vmb.{{ .Release.Name }}.assemblyvoting.net"
+  name: vmb
+  namespace: "{{ .Release.Name }}"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "vmb.{{ .Release.Name }}.assemblyvoting.net"
+    http:
+      paths:
+      - backend:
+          service:
+            name: vmb
+            port:
+              number: 3005
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - "vmb.{{ .Release.Name }}.assemblyvoting.net"
+    secretName: vmb-service

@@ -1,0 +1,99 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: svs-sa
+  namespace: "{{ .Release.Name }}"
+secrets:
+- name: svs-sa
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: svs-sa
+  namespace: "{{ .Release.Name }}"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: svs
+  name: svs
+  namespace: "{{ .Release.Name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: svs
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: svs
+    spec:
+      serviceAccountName: svs-sa
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: svs-api
+        image: "{{ .Values.svs.api.image.repository }}:{{ .Values.svs.api.image.tag }}"
+        command: ["bin/docker-entrypoint"]
+        args: ["bundle", "exec", "rails", "s", "-b", "0.0.0.0"]
+        imagePullPolicy: Always
+        ports:
+          - protocol: TCP
+            containerPort: 3020
+        env:
+        - name: RAILS_ENV
+          value: development
+        - name: PORT
+          value: "3020"
+        - name: REDIS_URL
+          value: "redis://localhost:6382"
+        resources:
+          requests:
+            cpu: 300m
+            memory: 500Mi
+          limits:
+            cpu: 500m
+            memory: 500Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svs-api
+  namespace: "{{ .Release.Name }}"
+spec:
+  selector:
+    app: svs
+  ports:
+  - name: http
+    port: 3020
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    external-dns.alpha.kubernetes.io/hostname: "api.svs.{{ .Release.Name }}.assemblyvoting.net"
+  name: svs-api
+  namespace: "{{ .Release.Name }}"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "api.svs.{{ .Release.Name }}.assemblyvoting.net"
+    http:
+      paths:
+      - backend:
+          service:
+            name: svs-api
+            port:
+              number: 3020
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - "api.svs.{{ .Release.Name }}.assemblyvoting.net"
+    secretName: svs-api-service
