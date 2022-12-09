@@ -13,3 +13,13 @@ If this is a first-time deployment, you might have to take some manual steps to 
 To check the status of the deployment use the following command
 
   kubectl get pods -n {{ .Release.Name }}
+
+{{- if not .Values.persistence.enabled }}
+################################################################################
+#                                                                              #
+#                      WARNING! PERSISTENCE IS *DISABLED*                      #
+#                                                                              #
+#        RESTARTING, CRASHING OR RESCHEDULING COULD LEAD TO DATA LOSS!         #
+#                                                                              #
+################################################################################
+{{ end }}
