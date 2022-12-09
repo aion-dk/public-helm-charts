@@ -262,14 +262,29 @@ spec:
             memory: 100Mi
       volumes:
       - name: uploads
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: conference-uploads
+        {{- else }}
         emptyDir:
-          sizeLimit: 500Mi
+          sizeLimit: {{ .Values.persistence.allocatedStorage }}
+        {{- end }}
       - name: public-uploads
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: conference-public-uploads
+        {{- else }}
         emptyDir:
-          sizeLimit: 500Mi
+          sizeLimit: {{ .Values.persistence.allocatedStorage }}
+        {{- end }}
       - name: shared
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: conference-shared
+        {{- else }}
         emptyDir:
-          sizeLimit: 500Mi
+          sizeLimit: {{ .Values.persistence.allocatedStorage }}
+        {{- end }}
 ---
 apiVersion: v1
 kind: Service
@@ -321,3 +336,41 @@ spec:
   - hosts:
     - "conference.{{ .Release.Name }}.assemblyvoting.net"
     secretName: conference-service
+{{- if .Values.persistence.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: conference-uploads
+  namespace: "{{ .Release.Name }}"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.allocatedStorage }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: conference-public-uploads
+  namespace: "{{ .Release.Name }}"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.allocatedStorage }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: conference-shared
+  namespace: "{{ .Release.Name }}"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.allocatedStorage }}
+{{- end }}
