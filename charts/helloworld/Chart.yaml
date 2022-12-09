@@ -26,7 +26,7 @@ appVersion: "1.23.2"
 
 annotations:
   artifacthub.io/changes: |
-    - name: img
+    - kind: changed
       image: nginx:1.23.2 
     - kind: added
       description: Added support for test of sops
