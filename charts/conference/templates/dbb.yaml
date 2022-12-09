@@ -164,8 +164,13 @@ spec:
             memory: 300Mi
       volumes:
       - name: uploads
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: dbb-uploads
+        {{- else }}
         emptyDir:
-          sizeLimit: 500Mi
+          sizeLimit: {{ .Values.persistence.allocatedStorage }}
+        {{- end }}
 ---
 apiVersion: v1
 kind: Service
@@ -206,3 +211,17 @@ spec:
   - hosts:
     - "dbb.{{ .Release.Name }}.assemblyvoting.net"
     secretName: dbb-service
+{{- if .Values.persistence.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dbb-uploads
+  namespace: "{{ .Release.Name }}"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.allocatedStorage }}
+{{- end }}

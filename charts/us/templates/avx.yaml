@@ -183,11 +183,21 @@ spec:
             memory: 2000Mi
       volumes:
       - name: uploads
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: avx-public
+        {{- else }}
         emptyDir:
-          sizeLimit: 500Mi
+          sizeLimit: {{ .Values.persistence.allocatedStorage }}
+        {{- end }}
       - name: packs
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: avx-packs
+        {{- else }}
         emptyDir:
-          sizeLimit: 500Mi
+          sizeLimit: {{ .Values.persistence.allocatedStorage }}
+        {{- end }}
 ---
 apiVersion: v1
 kind: Service
@@ -226,3 +236,29 @@ spec:
   - hosts:
     - "avx.{{ .Release.Name }}.assemblyvoting.net"
     secretName: avx-service
+{{- if .Values.persistence.enabled }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: avx-public
+  namespace: "{{ .Release.Name }}"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.allocatedStorage }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: avx-packs
+  namespace: "{{ .Release.Name }}"
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.allocatedStorage }}
+{{- end }}

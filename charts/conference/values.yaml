@@ -23,6 +23,11 @@ trusteeService:
     repository: public.ecr.aws/assembly-voting/trustee-service
     tag: c80feb7edab1215fce84c541cd68a5c5776104cb
 
+# If enabled, uses PersistentVolumeClaims, otherwise uses emptyDirs
+persistence:
+  enabled: true
+  allocatedStorage: 1Gi
+
 # These secret names must reflect those generated in the test-deployment/04-deployment
 # stage in (terraform-main)[https://github.com/aion-dk/terraform-main/blob/main/environments/exoscale-development/test-deployment/04-deployment/main.tf]
 databaseCredentials:

@@ -110,7 +110,6 @@ spec:
       - name: orchestrators
         configMap:
           name: trustee-service-orchestrators
-
 ---
 apiVersion: v1
 kind: Service
