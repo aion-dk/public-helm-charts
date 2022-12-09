@@ -2,6 +2,17 @@ apiVersion: v1
 entries:
   conference:
   - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-12-09T12:08:06.862467472Z"
+    description: A complete Conference deployment including Conference, Trustee Service,
+      DBB and DBAS.
+    digest: facf71f7e2275fe3bb8309790609d814ab8ceab8774fa00610ff145b86df8d5e
+    name: conference
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/conference-0.2.0/conference-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     appVersion: 1.16.0
     created: "2022-12-08T12:05:59.90313571Z"
     description: A complete Conference deployment including Conference, Trustee Service,
@@ -74,6 +85,17 @@ entries:
     version: 0.1.0
   us:
   - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-12-09T12:08:07.164333778Z"
+    description: A complete US deployment including AVX, SVS, DBB, DBAS, VMB, VA and
+      OTP.
+    digest: 7d91c0e5059e60adb195bc3c39163caa34d5da1747543ad8bb02c7746b7c62d2
+    name: us
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.2.0/us-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     appVersion: 1.16.0
     created: "2022-12-08T11:50:46.421229276Z"
     description: A complete US deployment including AVX, SVS, DBB, DBAS, VMB, VA and
@@ -84,4 +106,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-08T12:07:19.387721185Z"
+generated: "2022-12-09T12:08:07.164354178Z"
