@@ -45,6 +45,16 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/conference-0.1.1/conference-0.1.1.tgz
     version: 0.1.1
+  ecr-pull-secret:
+  - apiVersion: v2
+    created: "2022-12-12T14:18:43.565049394Z"
+    description: A Helm chart for Kubernetes
+    digest: 7c158fab87edc6e3e6fd808a13c90fb1240b2bac82622efc7d95811cf9c75720
+    name: ecr-pull-secret
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/ecr-pull-secret-0.1.0/ecr-pull-secret-0.1.0.tgz
+    version: 0.1.0
   helloworld:
   - annotations:
       artifacthub.io/changes: "- name: img\n  image: nginx:1.23.2 \n- kind: added\n
@@ -106,4 +116,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-09T12:08:07.164354178Z"
+generated: "2022-12-12T14:18:43.565173692Z"
