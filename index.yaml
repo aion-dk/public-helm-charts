@@ -57,6 +57,19 @@ entries:
     version: 0.1.0
   helloworld:
   - annotations:
+      artifacthub.io/changes: "- kind: changed\n  image: nginx:1.23.2 \n- kind: added\n
+        \ description: Added support for test of sops\n"
+    apiVersion: v2
+    appVersion: 1.23.2
+    created: "2022-12-12T14:21:45.519270617Z"
+    description: A Helm chart for Kubernetes
+    digest: 6f2362575840a7750dbc2ea93681221917750961b190d6af01aaa29c9487d3b2
+    name: helloworld
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/helloworld-0.2.2/helloworld-0.2.2.tgz
+    version: 0.2.2
+  - annotations:
       artifacthub.io/changes: "- name: img\n  image: nginx:1.23.2 \n- kind: added\n
         \ description: Added support for test of sops\n"
     apiVersion: v2
@@ -116,4 +129,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-12T14:18:43.565173692Z"
+generated: "2022-12-12T14:21:45.519305219Z"
