@@ -49,6 +49,11 @@ avx:
     repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/avx
     tag: dev-c1f9bc9b36a9bd3757365d4175821a80bc00728d
 
+# If enabled, uses PersistentVolumeClaims, otherwise uses emptyDirs
+persistence:
+  enabled: true
+  allocatedStorage: 1Gi
+
 # These secret names must reflect those generated in the test-deployment/04-deployment
 # stage in (terraform-main)[https://github.com/aion-dk/terraform-main/blob/main/environments/exoscale-development/dev-us-1/04-deployment/main.tf]
 databaseCredentials:
