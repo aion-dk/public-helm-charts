@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "ecr-pull-secret.fullname" . }}
+  labels:
+    {{- include "ecr-pull-secret.labels" . | nindent 4 }}
+spec:
+  schedule: {{ .Values.cronjob.schedule | default "* * * * *" | quote }}
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      completions: 1
+      manualSelector: false
+      parallelism: 1
+      template:
+        spec:
+          automountServiceAccountToken: true
+          containers:
+          - command: ["/scripts/run.sh"]
+            envFrom:
+            - secretRef:
+                name: {{ .Values.name }}
+                optional: false
+            image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+            imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+            name: ecr-registry-helper
+            resources: {}
+            terminationMessagePath: /dev/termination-log
+            terminationMessagePolicy: File
+            volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+          volumes:
+            - name: scripts
+              configMap:
+                name: ecr-scripts
+                defaultMode: 0744
+          dnsPolicy: ClusterFirst
+          enableServiceLinks: true
+          restartPolicy: Never
+          schedulerName: default-scheduler
+          securityContext: {}
+          serviceAccount: {{ .Values.name }}
+          serviceAccountName: {{ .Values.name }}
+          shareProcessNamespace: false
+          terminationGracePeriodSeconds: 30
+          tolerations:
+          - key: visibility
+            operator: Equal
+            value: public
+      ttlSecondsAfterFinished: 86400
+  startingDeadlineSeconds: 10
+  successfulJobsHistoryLimit: 3
+  suspend: false

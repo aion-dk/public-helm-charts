@@ -1,0 +1,54 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  labels:
+    {{- include "ecr-pull-secret.labels" . | nindent 4 }}
+  name: post-install
+spec:
+  backoffLimit: 2
+  completionMode: NonIndexed
+  completions: 1
+  manualSelector: false
+  parallelism: 1
+  suspend: false
+  template:
+    metadata:
+      labels:
+        job-name: post-install
+    spec:
+      automountServiceAccountToken: true
+      containers:
+      - command:
+        - /scripts/run.sh
+        envFrom:
+        - secretRef:
+            name: ecr-registry-helper
+            optional: false
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+        name: ecr-registry-helper
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /scripts
+          name: scripts
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: true
+      restartPolicy: Never
+      schedulerName: default-scheduler
+      securityContext: {}
+      serviceAccount: ecr-registry-helper
+      serviceAccountName: ecr-registry-helper
+      shareProcessNamespace: false
+      terminationGracePeriodSeconds: 30
+      tolerations:
+      - key: visibility
+        operator: Equal
+        value: public
+      volumes:
+      - configMap:
+          defaultMode: 484
+          name: ecr-scripts
+        name: scripts
+  ttlSecondsAfterFinished: 86400

@@ -1,0 +1,33 @@
+# Default values for ecr-pull-secret.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+name: "ecr-registry-helper"
+
+cronjob:
+  concurrency_policy: "Replace"
+  failed_jobs_history_limit: 5
+  schedule: "* * * * *"
+  starting_deadline_seconds: 10
+  successful_jobs_history_limit: 3
+  suspend: "false"
+  restart_policy: "Never"
+
+service_account:
+  create: true
+  name: ecr-registry-helper
+
+image:
+  repository: odaniait/aws-kubectl
+  tag: latest
+  pullPolicy: Always
+
+docker:
+  username: AWS 
+  password: ""
+  server: docker.io
+aws:
+  region: "eu-west-1"
+  server: "docker.io"
+  key: ""
+  secret_access_key: ""
+  account: ""

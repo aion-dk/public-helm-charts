@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ecr-scripts
+  labels:
+    {{- include "ecr-pull-secret.labels" . | nindent 4 }}
+data:
+  run.sh: |-
+    #!/bin/sh
+    ECR_TOKEN=$(aws ecr get-login-password --region eu-west-1)
+    echo ""
+    echo ""
+    # echo "kubectl delete secret --ignore-not-found" --namespace ${NAMESPACE} av-ecr-private-registry
+    # echo "kubectl create secret av-ecr-private-registry --namespace ${NAMESPACE} --docker-server=${DOCKER_SERVER} --docker-username=${DOCKER_USERNAME} --docker-password ${ECR_TOKEN}"
+    kubectl delete secret --ignore-not-found --namespace ${NAMESPACE} av-ecr-private-registry
+    kubectl create secret docker-registry av-ecr-private-registry --namespace ${NAMESPACE} --docker-server="${DOCKER_SERVER}" --docker-username=${DOCKER_USERNAME} --docker-password="${ECR_TOKEN}"
+    echo ""
+    echo ""
+    echo "Secret was successfull updated at $(date)"
+    
