@@ -19,6 +19,8 @@ rules:
   - secrets
   verbs:
   - delete
+  - update
+  - patch
 - apiGroups:
   - ""
   resources:
@@ -38,4 +40,3 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: ecr-registry-helper
-
