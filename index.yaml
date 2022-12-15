@@ -53,6 +53,21 @@ entries:
         - kind added
           description: Adding so it add annotation for reflector,  reflector.v1.k8s.emberstack.com/reflection-allowed: true
     apiVersion: v2
+    created: "2022-12-15T12:04:37.730338815Z"
+    description: A Helm chart for Kubernetes
+    digest: 524456898bb22c0c389b9c66cff711501a8523f2e6270b5754217331dc79617b
+    name: ecr-pull-secret
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/ecr-pull-secret-0.1.4/ecr-pull-secret-0.1.4.tgz
+    version: 0.1.4
+  - annotations:
+      artifacthub.io/changes: |-
+        - kind: added
+          description: Added postinstall hook for create the secret first
+        - kind added
+          description: Adding so it add annotation for reflector,  reflector.v1.k8s.emberstack.com/reflection-allowed: true
+    apiVersion: v2
     created: "2022-12-15T12:00:41.311221146Z"
     description: A Helm chart for Kubernetes
     digest: 949a616fb6bd00ccae8986a9c4057e8457239c8175566e2309395cdea0472cab
@@ -172,4 +187,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-15T12:00:41.311251646Z"
+generated: "2022-12-15T12:04:37.730506828Z"
