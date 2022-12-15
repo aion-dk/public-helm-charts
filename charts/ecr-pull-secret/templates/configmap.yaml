@@ -14,7 +14,7 @@ data:
     # echo "kubectl create secret av-ecr-private-registry --namespace ${NAMESPACE} --docker-server=${DOCKER_SERVER} --docker-username=${DOCKER_USERNAME} --docker-password ${ECR_TOKEN}"
     kubectl delete secret --ignore-not-found --namespace ${NAMESPACE} av-ecr-private-registry
     kubectl create secret docker-registry av-ecr-private-registry --namespace ${NAMESPACE} --docker-server="${DOCKER_SERVER}" --docker-username=${DOCKER_USERNAME} --docker-password="${ECR_TOKEN}"
-    kubectl --namespace ${NAMESPACE} annotate secrets av-ecr-private-registry  reflector.v1.k8s.emberstack.com/reflection-allowed="true"
+    kubectl --namespace ${NAMESPACE} annotate secrets av-ecr-private-registry reflector.v1.k8s.emberstack.com/reflection-allowed="true"
     echo ""
     echo ""
     echo "Secret was successfull updated at $(date)"
