@@ -12,6 +12,15 @@ cronjob:
   suspend: "false"
   restart_policy: "Never"
 
+securityContext:
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+podSecurityPolicy:
+  enabled: false
+
+
 service_account:
   create: true
   name: ecr-registry-helper
@@ -22,7 +31,7 @@ image:
   pullPolicy: Always
 
 docker:
-  username: AWS 
+  username: AWS
   password: ""
   server: docker.io
 aws:

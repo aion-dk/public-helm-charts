@@ -9,7 +9,7 @@ metadata:
     # job is considered part of the release.
     "helm.sh/hook": post-install
     "helm.sh/hook-weight": "5"
-    "helm.sh/hook-delete-policy": hook-succeeded  
+    "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   backoffLimit: 2
   completionMode: NonIndexed
@@ -26,6 +26,8 @@ spec:
       automountServiceAccountToken: true
       containers:
       - command:
+        - /bin/sh
+        - -c
         - /scripts/run.sh
         envFrom:
         - secretRef:
@@ -44,7 +46,8 @@ spec:
       enableServiceLinks: true
       restartPolicy: Never
       schedulerName: default-scheduler
-      securityContext: {}
+      securityContext:
+        {{- .Values.securityContext | toYaml | trim | nindent 8 }}
       serviceAccount: ecr-registry-helper
       serviceAccountName: ecr-registry-helper
       shareProcessNamespace: false
@@ -55,7 +58,7 @@ spec:
         value: public
       volumes:
       - configMap:
-          defaultMode: 484
+          defaultMode: 0744
           name: ecr-scripts
         name: scripts
   ttlSecondsAfterFinished: 86400

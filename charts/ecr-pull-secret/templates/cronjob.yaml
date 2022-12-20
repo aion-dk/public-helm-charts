@@ -16,7 +16,10 @@ spec:
         spec:
           automountServiceAccountToken: true
           containers:
-          - command: ["/scripts/run.sh"]
+          - command:
+            - /bin/sh
+            - -c
+            - /scripts/run.sh
             envFrom:
             - secretRef:
                 name: {{ .Values.name }}
@@ -39,7 +42,8 @@ spec:
           enableServiceLinks: true
           restartPolicy: Never
           schedulerName: default-scheduler
-          securityContext: {}
+          securityContext:
+            {{- .Values.securityContext | toYaml | trim | nindent 12 }}
           serviceAccount: {{ .Values.name }}
           serviceAccountName: {{ .Values.name }}
           shareProcessNamespace: false
