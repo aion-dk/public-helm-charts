@@ -15,15 +15,15 @@ type: application
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 0.1.6
+version: 0.1.7
 
 
 
 annotations:
   artifacthub.io/changes: |
     - kind: added
-      description: Added postinstall hook for create the secret first
+      description: "Added postinstall hook for create the secret first"
     - kind: added
-      description: Adding so it add annotation for reflector,  reflector.v1.k8s.emberstack.com/reflection-allowed: true
+      description: "Adding so it add annotation for reflector,  reflector.v1.k8s.emberstack.com/reflection-allowed: true"
     - kind: added
-      description: Trying to add some psp for the cronjob
+      description: "Trying to add some psp for the cronjob"
