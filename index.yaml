@@ -50,6 +50,23 @@ entries:
       artifacthub.io/changes: |-
         - kind: added
           description: Added postinstall hook for create the secret first
+        - kind: added
+          description: Adding so it add annotation for reflector,  reflector.v1.k8s.emberstack.com/reflection-allowed: true
+        - kind: added
+          description: Trying to add some psp for the cronjob
+    apiVersion: v2
+    created: "2022-12-20T07:45:21.011095382Z"
+    description: A Helm chart for Kubernetes
+    digest: fb28973b2ca88b3bdd0f10bab816af775194df955365288e397b616b1e322f8d
+    name: ecr-pull-secret
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/ecr-pull-secret-0.1.6/ecr-pull-secret-0.1.6.tgz
+    version: 0.1.6
+  - annotations:
+      artifacthub.io/changes: |-
+        - kind: added
+          description: Added postinstall hook for create the secret first
         - kind added
           description: Adding so it add annotation for reflector,  reflector.v1.k8s.emberstack.com/reflection-allowed: true
     apiVersion: v2
@@ -202,4 +219,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-16T07:00:31.672373762Z"
+generated: "2022-12-20T07:45:21.011132582Z"
