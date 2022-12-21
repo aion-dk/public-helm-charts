@@ -12,6 +12,7 @@ va:
   image:
     repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/voter-authorizer
     tag: 2760cad8863a225099e7ebfb398266698aca313c
+  allowAllVoters: "false"
   voterRegistry:
     endpoint: https://wdgxz5zqf7.execute-api.us-east-1.amazonaws.com/development-v3-1-2/lookupVoterEmail
     apiKey:
