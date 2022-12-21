@@ -65,7 +65,7 @@ spec:
         - name: VOTER_REGISTRY_API_KEY
           {{- toYaml .Values.va.voterRegistry.apiKey | nindent 10 }}
         - name: OTP_URL
-          value: "otp:3001"
+          value: "http://otp:3001"
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
