@@ -85,6 +85,8 @@ spec:
           value: development
         - name: HOSTS
           value: "localhost,dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+        - name: SKIP_TEST_DATABASE
+          value: "true"
         - name: EA_SITE_PUBLIC_KEY
           valueFrom:
             secretKeyRef:
