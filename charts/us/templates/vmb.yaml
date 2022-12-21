@@ -47,7 +47,7 @@ spec:
         - name: NODE_ENV
           value: production
         - name: REACT_APP_BASE_ELECTION_URL
-          value: "https://dbb.{{ .Release.Name }}.assemblyvoting.net"
+          value: "https://dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
         - name: REACT_APP_STRICT
           value: "false"
         - name: REACT_APP_TIMEOUT_REMINDER_TIME
@@ -79,13 +79,13 @@ kind: Ingress
 metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-production
-    external-dns.alpha.kubernetes.io/hostname: "vmb.{{ .Release.Name }}.assemblyvoting.net"
+    external-dns.alpha.kubernetes.io/hostname: "vmb.avx.{{ .Release.Name }}.assemblyvoting.net"
   name: vmb
   namespace: "{{ .Release.Name }}"
 spec:
   ingressClassName: nginx
   rules:
-  - host: "vmb.{{ .Release.Name }}.assemblyvoting.net"
+  - host: "vmb.avx.{{ .Release.Name }}.assemblyvoting.net"
     http:
       paths:
       - backend:
@@ -97,5 +97,5 @@ spec:
         pathType: Prefix
   tls:
   - hosts:
-    - "vmb.{{ .Release.Name }}.assemblyvoting.net"
+    - "vmb.avx.{{ .Release.Name }}.assemblyvoting.net"
     secretName: vmb-service
