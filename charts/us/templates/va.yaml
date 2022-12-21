@@ -64,8 +64,10 @@ spec:
           value: {{ .Values.va.voterRegistry.endpoint }}
         - name: VOTER_REGISTRY_API_KEY
           {{- toYaml .Values.va.voterRegistry.apiKey | nindent 10 }}
+        - name: ALLOW_ALL_VOTERS
+          value: "{{ .Values.va.allowAllVoters }}"
         - name: OTP_URL
-          value: "otp:3001"
+          value: "http://otp:3001"
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
