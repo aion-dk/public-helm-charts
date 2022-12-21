@@ -216,6 +216,17 @@ entries:
   us:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2022-12-21T13:48:54.022827763Z"
+    description: A complete US deployment including AVX, SVS, DBB, DBAS, VMB, VA and
+      OTP.
+    digest: eb40fd14e1b0a45f4aedfdb71785c0ec8378c6dac72fb529949f439b0d3f1d6d
+    name: us
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.2.1/us-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2022-12-09T12:08:07.164333778Z"
     description: A complete US deployment including AVX, SVS, DBB, DBAS, VMB, VA and
       OTP.
@@ -236,4 +247,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-20T08:14:55.482775017Z"
+generated: "2022-12-21T13:48:54.022889469Z"
