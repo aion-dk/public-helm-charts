@@ -91,7 +91,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: public-key
-              name: ea-site-public-key
+              name: avx-site-public-key
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
@@ -156,7 +156,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: public-key
-              name: ea-site-public-key
+              name: avx-site-public-key
         resources:
           requests:
             cpu: 50m
