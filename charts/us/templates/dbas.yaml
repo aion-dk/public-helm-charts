@@ -38,7 +38,7 @@ spec:
       {{- end }}
       containers:
       - name: dbas
-        image: "{{ .Values.dbb.image.repository }}:{{ .Values.dbb.image.tag }}"
+        image: "{{ .Values.dbas.image.repository }}:{{ .Values.dbas.image.tag }}"
         imagePullPolicy: Always
         ports:
         - protocol: TCP
