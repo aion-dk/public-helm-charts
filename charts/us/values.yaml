@@ -1,7 +1,7 @@
 dbb:
   image:
     repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/dbb
-    tag: dev-324f83228e06ab676541bdecb65949e1b5ff3f87
+    tag: dev-c4588ae11dcb820e9cade97dfe637890f142491f
 
 dbas:
   image:
@@ -11,7 +11,7 @@ dbas:
 va:
   image:
     repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/voter-authorizer
-    tag: cc7cfb6eaa8b347f8f71a367cea4d04e975a18cf
+    tag: 2760cad8863a225099e7ebfb398266698aca313c
   voterRegistry:
     endpoint: https://wdgxz5zqf7.execute-api.us-east-1.amazonaws.com/development-v3-1-2/lookupVoterEmail
     apiKey:
