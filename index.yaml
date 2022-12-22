@@ -217,6 +217,21 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: changes
+          description: "Disabling the check for namespace"
+    apiVersion: v2
+    appVersion: 1.0.0
+    created: "2022-12-22T13:17:13.940633056Z"
+    description: A complete US deployment including AVX, SVS, DBB, DBAS, VMB, VA and
+      OTP.
+    digest: 17c123d616abfc913af025565a370657c6ce9100a7bdd1b629dd87562cc560be
+    name: us
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.2.3/us-0.2.3.tgz
+    version: 0.2.3
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changes
           description: "Using .Release.Namespace for check instead of .Release.Name"
     apiVersion: v2
     appVersion: 1.0.0
@@ -262,4 +277,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-22T13:09:48.712589579Z"
+generated: "2022-12-22T13:17:13.940754857Z"
