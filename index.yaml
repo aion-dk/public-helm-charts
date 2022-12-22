@@ -220,6 +220,21 @@ entries:
           description: "Disabling the check for namespace"
     apiVersion: v2
     appVersion: 1.0.0
+    created: "2022-12-22T13:19:55.032829239Z"
+    description: A complete US deployment including AVX, SVS, DBB, DBAS, VMB, VA and
+      OTP.
+    digest: 72c03d2948299785da0d20e12bae42c00dfacbad24f58333c6378e28a87dccb4
+    name: us
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.2.4/us-0.2.4.tgz
+    version: 0.2.4
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changes
+          description: "Disabling the check for namespace"
+    apiVersion: v2
+    appVersion: 1.0.0
     created: "2022-12-22T13:17:13.940633056Z"
     description: A complete US deployment including AVX, SVS, DBB, DBAS, VMB, VA and
       OTP.
@@ -277,4 +292,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-22T13:17:13.940754857Z"
+generated: "2022-12-22T13:19:55.032871839Z"
