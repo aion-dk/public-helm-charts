@@ -5,27 +5,27 @@
 # a number of secrets required by the deployment have already been created.
 
 # Validate that a namespace by the name of .Release.Name is present
-{{ if empty (lookup "v1" "Namespace" "" .Release.Name) }}
-  {{ fail (cat "Namespace" .Release.Name "must be created before deploying Conference to it. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
+{{ if empty (lookup "v1" "Namespace" "" .Release.Namespace) }}
+  {{ fail (cat "Namespace" .Release.Namespace "must be created before deploying Conference to it. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
 {{ end }}
 
 # Validate that a secret with the name of $databaseCredentials.dbb is present in the namespace.
-{{ if empty (lookup "v1" "Secret" .Release.Name .Values.databaseCredentials.dbb) }}
+{{ if empty (lookup "v1" "Secret" .Release.Namespace .Values.databaseCredentials.dbb) }}
   {{ fail (cat "Database credentials" .Values.databaseCredentials.dbb "must be present in the" .Release.Name "namespace. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
 {{ end }}
 
 # Validate that a secret with the name of $databaseCredentials.otp is present in the namespace.
-{{ if empty (lookup "v1" "Secret" .Release.Name .Values.databaseCredentials.otp) }}
+{{ if empty (lookup "v1" "Secret" .Release.Namespace .Values.databaseCredentials.otp) }}
   {{ fail (cat "Database credentials" .Values.databaseCredentials.otp "must be present in the" .Release.Name "namespace. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
 {{ end }}
 
 # Validate that a secret with the name of $databaseCredentials.va is present in the namespace.
-{{ if empty (lookup "v1" "Secret" .Release.Name .Values.databaseCredentials.va) }}
+{{ if empty (lookup "v1" "Secret" .Release.Namespace .Values.databaseCredentials.va) }}
   {{ fail (cat "Database credentials" .Values.databaseCredentials.va "must be present in the" .Release.Name "namespace. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
 {{ end }}
 
 # Validate that a secret with the name of $databaseCredentials.avx is present in the namespace.
-{{ if empty (lookup "v1" "Secret" .Release.Name .Values.databaseCredentials.avx) }}
+{{ if empty (lookup "v1" "Secret" .Release.Namespace .Values.databaseCredentials.avx) }}
   {{ fail (cat "Database credentials" .Values.databaseCredentials.avx "must be present in the" .Release.Name "namespace. See the documentation in https://github.com/aion-dk/terraform-main for more information") }}
 {{ end }}
 
