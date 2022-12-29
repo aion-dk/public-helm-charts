@@ -26,4 +26,4 @@ appVersion: "1.0.0"
 annotations:
   artifacthub.io/changes: |
     - kind: changes
-      description: "Disabling the check for namespace"
+      description: "Initial build"
