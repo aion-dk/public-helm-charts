@@ -3,6 +3,20 @@ entries:
   aion-dbb:
   - annotations:
       artifacthub.io/changes: |
+        - kind: changed
+          description: Fixed b64enc i secret
+    apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-12-29T10:07:53.243081406Z"
+    description: A Helm chart for Kubernetes
+    digest: b3254adb0f13ffd42040b440bec568e7fe1d30bc2c7d27a04c27d75dbbb1a997
+    name: aion-dbb
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/aion-dbb-0.2.2/aion-dbb-0.2.2.tgz
+    version: 0.2.2
+  - annotations:
+      artifacthub.io/changes: |
         - kind: added
           description: Secret for database
     apiVersion: v2
@@ -331,4 +345,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-29T10:02:55.857084661Z"
+generated: "2022-12-29T10:07:53.243124606Z"
