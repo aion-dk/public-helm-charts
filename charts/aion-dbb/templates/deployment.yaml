@@ -1,0 +1,160 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: dbb
+  name: dbb
+  namespace: "{{ .Release.Name }}"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dbb
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: dbb
+    spec:
+      serviceAccountName: dbb-sa
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      initContainers:
+      - name: dbb-migrate
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails db:migrate"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: RAILS_ENV
+          value: development
+      containers:
+      - name: dbb
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails s -b '0.0.0.0' -p 3003"]
+        imagePullPolicy: Always
+        ports:
+          - protocol: TCP
+            containerPort: 3003
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: RAILS_ENV
+          value: development
+        - name: HOSTS
+          value: "localhost,dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+        - name: SKIP_TEST_DATABASE
+          value: "true"
+        - name: EA_SITE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: public-key
+              name: avx-site-public-key
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        resources:
+          requests:
+            cpu: 50m
+            memory: 200Mi
+          limits:
+            cpu: 100m
+            memory: 300Mi
+      - name: dbb-jobs
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails jobs:work"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: RAILS_ENV
+          value: development
+        - name: HOSTS
+          value: "localhost,dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+        - name: EA_SITE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: public-key
+              name: avx-site-public-key
+        resources:
+          requests:
+            cpu: 50m
+            memory: 200Mi
+          limits:
+            cpu: 100m
+            memory: 300Mi
+      volumes:
+      - name: uploads
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: dbb-uploads
+        {{- else }}
+        emptyDir:
+          sizeLimit: {{ .Values.persistence.size }}
+        {{- end }}

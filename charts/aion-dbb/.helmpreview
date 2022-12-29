@@ -1,0 +1,1 @@
+ helm template -f ../values-aion-dbb.yaml aion-dbb
