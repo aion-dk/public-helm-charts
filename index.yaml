@@ -7,6 +7,20 @@ entries:
           description: Fixed wrong port reference in secret
     apiVersion: v2
     appVersion: 1.16.0
+    created: "2022-12-29T10:28:50.472247322Z"
+    description: A Helm chart for Kubernetes
+    digest: dc86ab09d707e68c4dc5f523578ae638920e11a82699de597fc72e724067b7e0
+    name: aion-dbb
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/aion-dbb-0.2.4/aion-dbb-0.2.4.tgz
+    version: 0.2.4
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
+          description: Fixed wrong port reference in secret
+    apiVersion: v2
+    appVersion: 1.16.0
     created: "2022-12-29T10:24:04.362778839Z"
     description: A Helm chart for Kubernetes
     digest: 78c8170e497d19693319262bb69f00e198bddd7f20364d1bc50fcadce40ecf72
@@ -359,4 +373,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-29T10:24:04.36282964Z"
+generated: "2022-12-29T10:28:50.472309023Z"
