@@ -16,7 +16,7 @@ spec:
       labels:
         app: dbb
     spec:
-      serviceAccountName: dbb-sa
+      serviceAccountName:  {{ include "aion-dbb.serviceAccountName" . }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
