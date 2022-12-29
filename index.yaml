@@ -4,6 +4,20 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: added
+          description: Secret for database
+    apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-12-29T10:02:55.857043261Z"
+    description: A Helm chart for Kubernetes
+    digest: 8b8aba62e586ff48ffe819e2276da67d625b59ac5be2707aee001bee7568f9f3
+    name: aion-dbb
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/aion-dbb-0.2.1/aion-dbb-0.2.1.tgz
+    version: 0.2.1
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: added
           description: Possible to add pullsecrets to sa
     apiVersion: v2
     appVersion: 1.16.0
@@ -317,4 +331,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-29T09:30:34.30681818Z"
+generated: "2022-12-29T10:02:55.857084661Z"
