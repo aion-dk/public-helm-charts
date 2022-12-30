@@ -75,7 +75,7 @@ spec:
         - name: EA_SITE_PUBLIC_KEY
           valueFrom:
             secretKeyRef:
-              key: public-key
+              key: publicKey
               name: avx-site-public-key
         - name: DB_HOST
           valueFrom:
@@ -140,7 +140,7 @@ spec:
         - name: EA_SITE_PUBLIC_KEY
           valueFrom:
             secretKeyRef:
-              key: public-key
+              key: publicKey
               name: avx-site-public-key
         resources:
           requests:
