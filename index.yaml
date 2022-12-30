@@ -4,6 +4,20 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: changed
+          description: Changed key in secret to not having -
+    apiVersion: v2
+    appVersion: 1.16.0
+    created: "2022-12-30T11:36:40.395703122Z"
+    description: A Helm chart for Kubernetes
+    digest: b6d7c1f27fff6bbe32266431c63aae1f7feb06816b63cb8e4a33b4c571035931
+    name: aion-dbb
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/aion-dbb-0.2.5/aion-dbb-0.2.5.tgz
+    version: 0.2.5
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changed
           description: Fixed wrong port reference in secret
     apiVersion: v2
     appVersion: 1.16.0
@@ -373,4 +387,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-29T10:28:50.472309023Z"
+generated: "2022-12-30T11:36:40.395761923Z"
