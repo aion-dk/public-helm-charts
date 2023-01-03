@@ -21,7 +21,7 @@ spec:
     metadata:
       labels:
         {{- include "ecr-pull-secret.labels" . | nindent 8 }}
-        job-name: post-install-ecr-pull-secrets
+        job-name: post-install-ecr-pull-secret
     spec:
       automountServiceAccountToken: true
       containers:
