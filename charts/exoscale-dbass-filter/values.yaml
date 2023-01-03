@@ -1,0 +1,26 @@
+api:
+  key: <somekey>
+  secret: <somethingsecret>
+
+database:
+  name: <dbname at exoscale>
+  zone: <zone at exoscale>
+
+tolerations:
+  - key: "visibility"
+    operator: "Equal"
+    value: "public"
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: exo-k8s-dbaas-filter
+
+global:
+  exoscale:
+    api:
+      key: ""
+      secret: ""
+    database:
+      name: ""
+      zone: ""

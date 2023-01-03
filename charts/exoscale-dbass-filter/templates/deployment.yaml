@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "exoscale-dbass-filter.labels" . | nindent 4 }}
+    app: exo-k8s-dbaas-filter
+  name: exo-k8s-dbaas-filter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exo-k8s-dbaas-filter
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: exo-k8s-dbaas-filter
+    spec:
+      serviceAccountName: {{ include "exoscale-dbass-filter.serviceAccountName" . }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      containers:
+      - image: exo.container-registry.com/exoscale-images/exo-kubectl:1.0
+        name: exo-kubectl
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 30m
+            memory: 16Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+        env:
+          - name: EXOSCALE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                key: api-key
+                name: exoscale-api-credentials
+                #${exoscale_secret}
+          - name: EXOSCALE_API_SECRET
+            valueFrom:
+              secretKeyRef:
+                key: api-secret
+                name: exoscale-api-credentials
+                # ${exoscale_secret}
+          - name: EXOSCALE_DB_NAME
+            valueFrom:
+              secretKeyRef:
+                key: database-name
+                name: exoscale-api-credentials
+          - name: EXOSCALE_DB_ZONE
+            valueFrom:
+              secretKeyRef:
+                key: database-zone
+                name: exoscale-api-credentials
+        command:
+            - sh
+            - "-c"
+            - |
+              /bin/bash <<'EOF'
+              if [[ -z "$${EXOSCALE_API_KEY}" ]]; then
+                echo "EXOSCALE_API_KEY secret not set"
+                exit 1
+              fi
+              if [[ -z "$${EXOSCALE_API_SECRET}" ]]; then
+                echo "EXOSCALE_API_SECRET secret not set"
+                exit 1
+              fi
+              if [[ -z "$${EXOSCALE_DB_NAME}" ]]; then
+                echo "EXOSCALE_DB_NAME secret not set"
+                exit 1
+              fi
+              if [[ -z "$${EXOSCALE_DB_ZONE}" ]]; then
+                echo "EXOSCALE_DB_ZONE secret not set"
+                exit 1
+              fi
+              # Current IPs
+              FILE1=$(mktemp /tmp/dbaas-filter.XXXXXX)
+              # IPs of last run
+              FILE2=$(mktemp /tmp/dbaas-filter.XXXXXX)
+              echo "" > $FILE1
+              echo "" > $FILE2
+              while true
+              do
+                # get a sorted list of all ips in the cluster to FILE1
+                kubectl get nodes -o json | jq '[.items[] | .status .addresses[] | select(.type=="ExternalIP")] | sort_by(.address) | .[].address' > $FILE1
+                cmp -s $FILE1 $FILE2
+                if [ "$?" == "1" ]
+                then
+                  echo "New IPs detected, updating database"
+                  # Remove newlines, ", and trim
+                  IPLISTFOREXO=`cat $FILE1 | sed 'H;$${x;s/\n/,/g;s/^,//;p;};d' | sed 's/"//g' | xargs`
+                  IPLISTFOREXO+="${join("", formatlist(",%s",public_cidrs))}"
+
+                  echo "Using IPs: $IPLISTFOREXO"
+                  exo dbaas update --mysql-ip-filter "$IPLISTFOREXO" ${EXOSCALE_DB_NAME} -z ${EXOSCALE_DB_ZONE} && cat $FILE1 > $FILE2
+                fi
+                sleep 10
+              done
+              EOF
