@@ -3,7 +3,8 @@ kind: Job
 metadata:
   labels:
     {{- include "ecr-pull-secret.labels" . | nindent 4 }}
-  name: post-install
+  name: post-install-ecr-pull-secret
+  generateName: post-install-ecr-pull-secret-
   annotations:
     # This is what defines this resource as a hook. Without this line, the
     # job is considered part of the release.
@@ -11,7 +12,7 @@ metadata:
     "helm.sh/hook-weight": "5"
     # "helm.sh/hook-delete-policy": hook-succeeded
 spec:
-  backoffLimit: 2
+  backoffLimit: 1
   completionMode: NonIndexed
   completions: 1
   manualSelector: false
@@ -21,7 +22,7 @@ spec:
     metadata:
       labels:
         {{- include "ecr-pull-secret.labels" . | nindent 8 }}
-        job-name: post-install
+        job-name: post-install-ecr-pull-secrets
     spec:
       automountServiceAccountToken: true
       containers:
