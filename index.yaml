@@ -144,6 +144,19 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: changes
+          description: "Rename job name"
+    apiVersion: v2
+    created: "2023-01-03T11:32:47.9878815Z"
+    description: A Helm chart for Kubernetes
+    digest: a244698eba904fd763e484e306a32b80c0f638bce2d47654519bc2b68d9db959
+    name: ecr-pull-secret
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/ecr-pull-secret-0.1.9/ecr-pull-secret-0.1.9.tgz
+    version: 0.1.9
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changes
           description: "Fixed the job to run in aws"
     apiVersion: v2
     created: "2023-01-03T08:15:41.42029766Z"
@@ -400,4 +413,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-03T08:15:41.42051446Z"
+generated: "2023-01-03T11:32:47.9879838Z"
