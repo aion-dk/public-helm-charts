@@ -90,7 +90,7 @@ spec:
                   echo "New IPs detected, updating database"
                   # Remove newlines, ", and trim
                   IPLISTFOREXO=`cat $FILE1 | sed 'H;$${x;s/\n/,/g;s/^,//;p;};d' | sed 's/"//g' | xargs`
-                  IPLISTFOREXO+="${join("", formatlist(",%s",public_cidrs))}"
+                  IPLISTFOREXO+=",152.115.35.210/32"
 
                   echo "Using IPs: $IPLISTFOREXO"
                   exo dbaas update --mysql-ip-filter "$IPLISTFOREXO" ${EXOSCALE_DB_NAME} -z ${EXOSCALE_DB_ZONE} && cat $FILE1 > $FILE2
