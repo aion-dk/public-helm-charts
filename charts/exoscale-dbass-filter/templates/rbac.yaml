@@ -35,7 +35,6 @@ rules:
 ---
 
 apiVersion: rbac.authorization.k8s.io/v1
-# This cluster role binding allows anyone in the "manager" group to read secrets in any namespace.
 kind: ClusterRoleBinding
 metadata:
   name: {{ include "exoscale-dbass-filter.clusterRoleName" . }}
@@ -43,24 +42,9 @@ metadata:
     {{- include "exoscale-dbass-filter.labels" . | nindent 4 }}
 subjects:
 - kind: ServiceAccount
-  name: {{ include "exoscale-dbass-filter.serviceAccountName" . }} # Name is case sensitive
+  name: {{ include "exoscale-dbass-filter.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 roleRef:
   kind: ClusterRole
   name: {{ include "exoscale-dbass-filter.clusterRoleName" . }}
   apiGroup: rbac.authorization.k8s.io
-
-
-# resource "kubernetes_cluster_role" "node_reader" {
-#   metadata {
-#     name = "${var.deployment_name}-exo-k8s-node-reader"
-#   }
-
-#   rule {
-#     api_groups = [""]
-#     resources  = ["nodes", ""]
-#     verbs      = ["get", "list", "watch"]
-#   }
-# }
-
-# Rolebinding

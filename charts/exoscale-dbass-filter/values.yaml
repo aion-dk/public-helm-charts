@@ -1,3 +1,12 @@
+global:
+  exoscale:
+    api:
+      key: ""
+      secret: ""
+    database:
+      name: ""
+      zone: ""
+
 api:
   key: <somekey>
   secret: <somethingsecret>
@@ -15,12 +24,3 @@ serviceAccount:
   create: true
   annotations: {}
   name: exo-k8s-dbaas-filter
-
-global:
-  exoscale:
-    api:
-      key: ""
-      secret: ""
-    database:
-      name: ""
-      zone: ""
