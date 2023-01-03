@@ -6,20 +6,20 @@ name: "ecr-registry-helper"
 cronjob:
   concurrency_policy: "Replace"
   failed_jobs_history_limit: 5
-  schedule: "* * * * *"
+  schedule: "33 */8 * * *"
   starting_deadline_seconds: 10
   successful_jobs_history_limit: 3
   suspend: "false"
   restart_policy: "Never"
 
 securityContext:
-  runAsUser: 1000
-  runAsGroup: 1000
-  fsGroup: 1000
+  {}
+  # runAsUser: 1000
+  # runAsGroup: 1000
+  # fsGroup: 1000
 
 podSecurityPolicy:
   enabled: false
-
 
 service_account:
   create: true

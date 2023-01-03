@@ -8,8 +8,6 @@ data:
   run.sh: |-
     #!/bin/sh
     ECR_TOKEN=$(aws ecr get-login-password --region eu-west-1)
-    echo ""
-    echo ""
     # echo "kubectl delete secret --ignore-not-found" --namespace ${NAMESPACE} av-ecr-private-registry
     # echo "kubectl create secret av-ecr-private-registry --namespace ${NAMESPACE} --docker-server=${DOCKER_SERVER} --docker-username=${DOCKER_USERNAME} --docker-password ${ECR_TOKEN}"
     kubectl delete secret --ignore-not-found --namespace ${NAMESPACE} av-ecr-private-registry

@@ -9,7 +9,7 @@ metadata:
     # job is considered part of the release.
     "helm.sh/hook": post-install
     "helm.sh/hook-weight": "5"
-    "helm.sh/hook-delete-policy": hook-succeeded
+    # "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   backoffLimit: 2
   completionMode: NonIndexed
@@ -58,7 +58,7 @@ spec:
         value: public
       volumes:
       - configMap:
-          defaultMode: 0744
+          defaultMode: 0777
           name: ecr-scripts
         name: scripts
   ttlSecondsAfterFinished: 86400

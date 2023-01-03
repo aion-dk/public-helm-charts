@@ -5,10 +5,10 @@ metadata:
   labels:
     {{- include "ecr-pull-secret.labels" . | nindent 4 }}
 spec:
-  schedule: {{ .Values.cronjob.schedule | default "* * * * *" | quote }}
+  schedule: {{ .Values.cronjob.schedule | default "0 /8 * * *" | quote }}
   jobTemplate:
     spec:
-      backoffLimit: 2
+      backoffLimit: 1
       completions: 1
       manualSelector: false
       parallelism: 1
@@ -37,7 +37,7 @@ spec:
             - name: scripts
               configMap:
                 name: ecr-scripts
-                defaultMode: 0744
+                defaultMode: 0777
           dnsPolicy: ClusterFirst
           enableServiceLinks: true
           restartPolicy: Never
@@ -53,6 +53,7 @@ spec:
             operator: Equal
             value: public
       ttlSecondsAfterFinished: 86400
-  startingDeadlineSeconds: 10
+  startingDeadlineSeconds: 20
   successfulJobsHistoryLimit: 3
   suspend: false
+  concurrencyPolicy: Forbid
