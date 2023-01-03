@@ -312,6 +312,16 @@ entries:
   exoscale-dbass-filter:
   - apiVersion: v2
     appVersion: 1.16.0
+    created: "2023-01-03T15:31:03.964185652Z"
+    description: A Helm chart for Kubernetes
+    digest: 2566a1b6d9d7e2ee321e5353283f0e27bc75728bea4d88e37d32cde1c5a5945b
+    name: exoscale-dbass-filter
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/exoscale-dbass-filter-0.1.3/exoscale-dbass-filter-0.1.3.tgz
+    version: 0.1.3
+  - apiVersion: v2
+    appVersion: 1.16.0
     created: "2023-01-03T15:23:43.283133776Z"
     description: A Helm chart for Kubernetes
     digest: f90df0749c578574ccc870a46301d435cf2d7c85a625f59d26ac78c18fe6ef8b
@@ -470,4 +480,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-03T15:23:43.283183475Z"
+generated: "2023-01-03T15:31:03.964250051Z"
