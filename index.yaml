@@ -142,6 +142,19 @@ entries:
     version: 0.1.1
   ecr-pull-secret:
   - annotations:
+      artifacthub.io/changes: |
+        - kind: changes
+          description: "Fixed the job to run in aws"
+    apiVersion: v2
+    created: "2023-01-03T08:15:41.42029766Z"
+    description: A Helm chart for Kubernetes
+    digest: 92c6dd898729345a4d3bd8e2917cb15c4812bbe82870dbacd1e7865e97869328
+    name: ecr-pull-secret
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/ecr-pull-secret-0.1.8/ecr-pull-secret-0.1.8.tgz
+    version: 0.1.8
+  - annotations:
       artifacthub.io/changes: |-
         - kind: added
           description: "Added postinstall hook for create the secret first"
@@ -387,4 +400,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-30T11:36:40.395761923Z"
+generated: "2023-01-03T08:15:41.42051446Z"
