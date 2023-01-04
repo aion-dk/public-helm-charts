@@ -5,6 +5,7 @@ Expand the name of the chart.
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
@@ -40,6 +41,7 @@ helm.sh/chart: {{ include "aion-dbb.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/environment: {{ .Values.global.environment }}
 {{- end }}
 
 {{/*
@@ -48,15 +50,4 @@ Selector labels
 {{- define "aion-dbb.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "aion-dbb.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "aion-dbb.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "aion-dbb.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
 {{- end }}

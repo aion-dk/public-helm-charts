@@ -35,14 +35,14 @@ spec:
       secretName: dbb-tls
   {{- end }}
   rules:
-    - host:
+    - host: {{ .Values.ingress.hostname | quote }}
       http:
         paths:
         - path: /
           pathType: Prefix
           backend:
             service:
-              name: dbb
+              name: {{ .Values.service.name }}
               port:
                 name: http
 {{- end }}

@@ -2,25 +2,26 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: dbb
+    {{- include "aion-dbb.labels" . | nindent 4 }}
   name: dbb
-  namespace: "{{ .Release.Name }}"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: dbb
+      {{- include "aion-dbb.selectorLabels" . | nindent 6 }}
+      # app: dbb
   strategy: {}
   template:
     metadata:
-      labels:
-        app: dbb
-    spec:
-      serviceAccountName:  {{ include "aion-dbb.serviceAccountName" . }}
-      {{- with .Values.imagePullSecrets }}
-      imagePullSecrets:
+      {{- with .Values.podAnnotations }}
+      annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      labels:
+        {{- include "aion-dbb.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- if not .Values.global.init }}
       initContainers:
       - name: dbb-migrate
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -52,24 +53,36 @@ spec:
               key: password
               name: "{{ .Values.databaseCredentials.secret }}"
         - name: RAILS_ENV
-          value: development
+          value: {{ .Values.global.environment }}
+      {{- end }}
       containers:
       - name: dbb
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         command: ["/bin/sh", "-c"]
-        args: ["bundle exec rails s -b '0.0.0.0' -p 3003"]
+        args: ["bundle exec rails s -b '0.0.0.0' -p {{ .Values.rails.port }}"]
         imagePullPolicy: Always
         ports:
-          - protocol: TCP
-            containerPort: 3003
+          - name: http
+            protocol: TCP
+            containerPort: {{ .Values.rails.port }}
+        {{- if not .Values.global.init }}
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        {{- end }}
         volumeMounts:
         - mountPath: /usr/src/app/uploads/
           name: uploads
         env:
         - name: RAILS_ENV
-          value: development
+          value: {{ .Values.global.environment }}
         - name: HOSTS
-          value: "localhost,dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+          value: "localhost,{{ .Values.hostname }}"
         - name: SKIP_TEST_DATABASE
           value: "true"
         - name: EA_SITE_PUBLIC_KEY
@@ -98,12 +111,8 @@ spec:
               key: password
               name: "{{ .Values.databaseCredentials.secret }}"
         resources:
-          requests:
-            cpu: 50m
-            memory: 200Mi
-          limits:
-            cpu: 100m
-            memory: 300Mi
+          {{- toYaml .Values.resources | nindent 12 }}
+      {{- if not .Values.global.init }}
       - name: dbb-jobs
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         command: ["/bin/sh", "-c"]
@@ -134,7 +143,7 @@ spec:
               key: password
               name: "{{ .Values.databaseCredentials.secret }}"
         - name: RAILS_ENV
-          value: development
+          value: {{ .Values.global.environment }}
         - name: HOSTS
           value: "localhost,dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
         - name: EA_SITE_PUBLIC_KEY
@@ -149,6 +158,7 @@ spec:
           limits:
             cpu: 100m
             memory: 300Mi
+      {{- end }}
       volumes:
       - name: uploads
         {{- if .Values.persistence.enabled }}
