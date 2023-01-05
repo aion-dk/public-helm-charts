@@ -415,6 +415,17 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/helloworld-0.1.0/helloworld-0.1.0.tgz
     version: 0.1.0
+  otp:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2023-01-05T07:58:46.619255172Z"
+    description: A Helm chart for Kubernetes
+    digest: 2217ee7f7de6c66d6214297857e8974129320dae31ed28dc3e7eecd40a894938
+    name: otp
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/otp-0.1.0/otp-0.1.0.tgz
+    version: 0.1.0
   us:
   - annotations:
       artifacthub.io/changes: |
@@ -494,4 +505,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-04T12:49:20.561822412Z"
+generated: "2023-01-05T07:58:46.619425772Z"
