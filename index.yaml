@@ -154,6 +154,17 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/conference-0.1.1/conference-0.1.1.tgz
     version: 0.1.1
+  dbas:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2023-01-05T08:38:17.99518506Z"
+    description: A Helm chart for Kubernetes
+    digest: b360736ffd32f2e5432fd7a5b913b84759151d8bc4ada1f7e18705f4b1584efe
+    name: dbas
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/dbas-0.1.0/dbas-0.1.0.tgz
+    version: 0.1.0
   dbb:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -516,4 +527,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-05T08:25:59.134288754Z"
+generated: "2023-01-05T08:38:18.258049718Z"
