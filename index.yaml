@@ -154,6 +154,17 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/conference-0.1.1/conference-0.1.1.tgz
     version: 0.1.1
+  dbb:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2023-01-05T08:25:59.134229355Z"
+    description: A Helm chart for Kubernetes
+    digest: c7466eea83cd09243e483e0f39bff6120bbc996eb0acef0be232c0289849a4af
+    name: dbb
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/dbb-0.1.0/dbb-0.1.0.tgz
+    version: 0.1.0
   ecr-pull-secret:
   - annotations:
       artifacthub.io/changes: |
@@ -505,4 +516,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/us-0.1.0/us-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-05T07:58:46.619425772Z"
+generated: "2023-01-05T08:25:59.134288754Z"
