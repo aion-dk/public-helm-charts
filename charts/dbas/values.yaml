@@ -27,7 +27,7 @@ image:
   tag: "dev-c4588ae11dcb820e9cade97dfe637890f142491f"
 
 rails:
-  port: 3000
+  port: 3010
 
 serviceAccount:
   name: dbas
