@@ -1,0 +1,174 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "otp.labels" . | nindent 4 }}
+  name: otp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "otp.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "otp.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- if not .Values.global.init }}
+      initContainers:
+      - name: otp-migrate
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails db:migrate"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+      {{- end }}
+      containers:
+      - name: otp
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails s -b '0.0.0.0' -p {{ .Values.rails.port }}"]
+        imagePullPolicy: Always
+        ports:
+          - name: http
+            protocol: TCP
+            containerPort: {{ .Values.rails.port }}
+        {{- if not .Values.global.init }}
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        {{- end }}
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+        - name: HOSTS
+          value: "localhost,{{ .Values.hostname }}"
+        - name: SKIP_TEST_DATABASE
+          value: "true"
+        - name: VA_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: publicKey
+              name: va-site-public-key
+        - name: OTP_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: privateKey
+              name: otp-site-public-key
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      {{- if not .Values.global.init }}
+      - name: otp-jobs
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails jobs:work"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+        - name: HOSTS
+          value: "localhost,otp.{{ .Release.Name }}.assemblyvoting.net"
+        - name: VA_SITE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: publicKey
+              name: va-site-public-key
+        resources:
+          requests:
+            cpu: 50m
+            memory: 200Mi
+          limits:
+            cpu: 100m
+            memory: 300Mi
+      {{- end }}
+      volumes:
+      - name: uploads
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: otp-uploads
+        {{- else }}
+        emptyDir:
+          sizeLimit: {{ .Values.persistence.size }}
+        {{- end }}
