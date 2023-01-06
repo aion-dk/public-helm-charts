@@ -26,10 +26,10 @@ secreKeyBase: "1" # RANDOM AUTORANDOM LATER IN SECRET
 replicaCount: 1
 
 image:
-  repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/va
+  repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/voter-authorizer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "dev-c4588ae11dcb820e9cade97dfe637890f142491f"
+  tag: "3b6628ed94fd743727aeacafd5d988c093b4d407"
 
 rails:
   port: 3000
