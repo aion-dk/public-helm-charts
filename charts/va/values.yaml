@@ -29,7 +29,7 @@ image:
   repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/voter-authorizer
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "3b6628ed94fd743727aeacafd5d988c093b4d407"
+  tag: 3b6628ed94fd743727aeacafd5d988c093b4d407
 
 rails:
   port: 3000
