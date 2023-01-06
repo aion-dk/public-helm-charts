@@ -12,11 +12,19 @@ hostname: example.localhost
 
 databaseCredentials:
   secret: otp-database-credentials
-  database: otp
   hostname: otp.localhost
   username: <username>
   password: <password>
   port: 3306
+
+mail:
+  strategy: test #"smtp" | "aion_mailer" | "test"
+  smtpHost: mailcatcher
+  smtpPort: 1025
+  peytzToken: "<peytz Token>"
+
+lockboxMasterKey: "0000000000000000000000000000000000000000000000000000000000000000"
+secreKeyBase: "1" # RANDOM AUTORANDOM LATER IN SECRET
 
 replicaCount: 1
 

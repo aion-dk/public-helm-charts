@@ -84,6 +84,16 @@ spec:
           value: "localhost,{{ .Values.hostname }}"
         - name: SKIP_TEST_DATABASE
           value: "true"
+        - name: LOCKBOX_MASTER_KEY
+          value: {{ .Values.lockboxMasterKey }}
+        - name: MAILER_STRATEGY
+          value: {{ .Values.mail.strategy }} #
+        - name: SMTP_HOST
+          value: {{ .Values.mail.smtpHost }}
+        - name: SMTP_PORT
+          value: {{ .Values.mail.smptPort }}
+        - name: PEYTZ_MAIL_TOKEN
+          value: {{ .Values.mail.peytzToken }}
         - name: VA_PUBLIC_KEY
           valueFrom:
             secretKeyRef:
