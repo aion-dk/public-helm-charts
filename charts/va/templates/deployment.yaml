@@ -105,7 +105,7 @@ spec:
         - name: VA_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
-              key: publicKey
+              key: privateKey
               name: va-site-private-key
         - name: DB_HOST
           valueFrom:
