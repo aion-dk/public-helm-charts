@@ -96,7 +96,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: publicKey
-              name: opt-site-public-key
+              name: otp-site-public-key
         - name: AVX_SITE_PUBLIC_KEY
           valueFrom:
             secretKeyRef:
