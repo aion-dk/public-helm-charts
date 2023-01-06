@@ -103,7 +103,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: privateKey
-              name: otp-site-public-key
+              name: otp-site-private-key
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
