@@ -1,0 +1,187 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "va.labels" . | nindent 4 }}
+  name: va
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "va.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "va.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- if not .Values.global.init }}
+      initContainers:
+      - name: va-migrate
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails db:migrate"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+      {{- end }}
+      containers:
+      - name: va
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails s -b '0.0.0.0' -p {{ .Values.rails.port }}"]
+        imagePullPolicy: Always
+        ports:
+          - name: http
+            protocol: TCP
+            containerPort: {{ .Values.rails.port }}
+        {{- if not .Values.global.init }}
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        {{- end }}
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+        - name: HOSTS
+          value: "localhost,{{ .Values.hostname }}"
+        - name: SKIP_TEST_DATABASE
+          value: "true"
+        - name: LOCKBOX_MASTER_KEY
+          value: {{ .Values.lockboxMasterKey }}
+        - name: OTP_URL
+          value:  "http://otp:3000"
+        - name: ALLOW_ALL_VOTERS
+          value: {{ .Values.global.allowAllVoters }}
+        - name: VOTER_REGISTRY_API_KEY
+          value: {{ .Values.voterRegistryApiKey }}
+        - name: OTP_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: publicKey
+              name: opt-site-public-key
+        - name: AVX_SITE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: publicKey
+              name: avx-site-public-key
+        - name: VA_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: publicKey
+              name: va-site-private-key
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      {{- if not .Values.global.init }}
+      - name: va-jobs
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails jobs:work"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+        - name: HOSTS
+          value: "localhost,va.avx.{{ .Release.Name }}.assemblyvoting.net"
+        - name: EA_SITE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: publicKey
+              name: avx-site-public-key
+        resources:
+          requests:
+            cpu: 50m
+            memory: 200Mi
+          limits:
+            cpu: 100m
+            memory: 300Mi
+      {{- end }}
+      volumes:
+      - name: uploads
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: va-uploads
+        {{- else }}
+        emptyDir:
+          sizeLimit: {{ .Values.persistence.size }}
+        {{- end }}
