@@ -89,7 +89,7 @@ spec:
         - name: OTP_URL
           value:  "http://otp:3000"
         - name: ALLOW_ALL_VOTERS
-          value: {{ .Values.global.allowAllVoters }}
+          value: {{ .Values.global.allowAllVoters | quote }}
         - name: VOTER_REGISTRY_API_KEY
           value: {{ .Values.voterRegistryApiKey }}
         - name: OTP_PUBLIC_KEY
