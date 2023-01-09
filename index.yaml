@@ -109,6 +109,17 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/aion-dbb-0.1.0/aion-dbb-0.1.0.tgz
     version: 0.1.0
+  avx:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2023-01-09T07:45:23.258064978Z"
+    description: A Helm chart for Kubernetes
+    digest: c0671ab4098a7deb98cb95971bf8704cdae25587ce420c8335205d42635c8c34
+    name: avx
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/avx-0.1.0/avx-0.1.0.tgz
+    version: 0.1.0
   conference:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -538,4 +549,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/va-0.1.0/va-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-06T08:26:30.106140899Z"
+generated: "2023-01-09T07:45:23.411030559Z"
