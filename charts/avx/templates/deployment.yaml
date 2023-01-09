@@ -122,13 +122,13 @@ spec:
         - name: DBB_URL
           value: "https://dbb.{{ .Values.global.projectHostname }}"
         - name: SVS_URL
-          value: svs-api:3020
+          value: http://svs:80
         - name: OTP_PROVIDER_URL
           value: "https://otp.{{ .Values.global.projectHostname }}"
         - name: VOTER_AUTHORIZER_URL
           value: "https://va.{{ .Values.global.projectHostname }}"
         - name: US_AVX_HOST
-          value: "https://avx.{{ .Values.global.projectHostname }}"
+          value: "avx.{{ .Values.global.projectHostname }}"
         - name: LOCKBOX_MASTER_KEY
           value: {{ .Values.lockboxMasterKey | quote}}
         - name: WEBPACK_PRECOMPILE

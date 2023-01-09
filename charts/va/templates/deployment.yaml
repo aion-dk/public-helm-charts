@@ -87,7 +87,7 @@ spec:
         - name: LOCKBOX_MASTER_KEY
           value: {{ .Values.lockboxMasterKey }}
         - name: OTP_URL
-          value:  "http://otp:3000"
+          value:  "http://otp:80"
         - name: ALLOW_ALL_VOTERS
           value: {{ .Values.global.allowAllVoters | quote }}
         - name: VOTER_REGISTRY_API_KEY
