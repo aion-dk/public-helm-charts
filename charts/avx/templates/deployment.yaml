@@ -1,0 +1,189 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "avx.labels" . | nindent 4 }}
+  name: avx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "avx.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "avx.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      {{- if not .Values.global.init }}
+      initContainers:
+      - name: avx-migrate
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails db:migrate"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+      {{- end }}
+      containers:
+      - name: avx
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails s -b '0.0.0.0' -p {{ .Values.rails.port }}"]
+        imagePullPolicy: Always
+        ports:
+          - name: http
+            protocol: TCP
+            containerPort: {{ .Values.rails.port }}
+        {{- if not .Values.global.init }}
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        {{- end }}
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+        - name: HOSTS
+          value: "localhost,{{ .Values.hostname }}"
+        - name: SKIP_TEST_DATABASE
+          value: "true"
+        - name: SECRET_KEY_BASE
+          value: {{ .Values.secretKeyBase }}
+        - name: AVX_SITE_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: private-key
+              name: avx-site-private-key
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DBB_URL
+          value: "https://dbb.{{ .Values.global.projectHostname }}"
+        - name: SVS_URL
+          value: svs-api:3020
+        - name: OTP_PROVIDER_URL
+          value: "https://otp.{{ .Values.global.projectHostname }}"
+        - name: VOTER_AUTHORIZER_URL
+          value: "https://va.{{ .Values.global.projectHostname }}"
+        - name: US_AVX_HOST
+          value: "https://avx.{{ .Values.global.projectHostname }}"
+        - name: LOCKBOX_MASTER_KEY
+          value: {{ .Values.lockboxMasterKey }}
+        - name: WEBPACK_PRECOMPILE
+          value: "true"
+        - name: ASSET_SERVER_URL
+          value: {{ .Values.env.assetsServer }}
+        - name: PROVISIONER_API_URL
+        - name: PROVISIONER_UI_URL
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      {{- if not .Values.global.init }}
+      - name: avx-jobs
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails jobs:work"]
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/src/app/uploads/
+          name: uploads
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              key: host
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              key: port
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              key: username
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: "{{ .Values.databaseCredentials.secret }}"
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+        - name: HOSTS
+          value: "localhost,dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+        - name: EA_SITE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: publicKey
+              name: avx-site-public-key
+        resources:
+          requests:
+            cpu: 50m
+            memory: 200Mi
+          limits:
+            cpu: 100m
+            memory: 300Mi
+      {{- end }}
+      volumes:
+      - name: uploads
+        {{- if .Values.persistence.enabled }}
+        persistentVolumeClaim:
+          claimName: dbb-uploads
+        {{- else }}
+        emptyDir:
+          sizeLimit: {{ .Values.persistence.size }}
+        {{- end }}

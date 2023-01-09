@@ -1,0 +1,118 @@
+global:
+  storageClass: default
+  # is the system in init mode.
+  # means the init container that do migrate will not run
+  # so you can get rails c for seed etc
+  init: false
+  environment: development
+  project: dev-us-tmp
+  projectHostname: dev-us-tmp.assembly-voting.com
+
+nameOverride: ""
+fullnameOverride: ""
+hostname: example.localhost
+
+databaseCredentials:
+  secret: avx-database-credentials
+  database: avx
+  hostname: avx.localhost
+  username: <username>
+  password: <password>
+  port: 3306
+
+voterRegistryApiKey: 5367566B58703273357638792F423F45
+lockboxMasterKey: "0000000000000000000000000000000000000000000000000000000000000000"
+secretKeyBase: "1" # RANDOM AUTORANDOM LATER IN SECRET
+
+env:
+  # dbbUrl: https://dbb.avx.dev-us-1.assemblyvoting.net
+  # svsUrl: http://svs-api:3020
+  # otpProviderUrl: https://otp.avx.dev-us-1.assemblyvoting.net
+  # voterAuthUrl: https://va.avx.dev-us-1.assemblyvoting.net
+  # usAvxHost: https://eo.avx.dev-us-1.assemblyvoting.net
+  assetsServer: https://assets.demo.assembly-voting.com
+replicaCount: 1
+
+image:
+  repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/avx
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "dev-c1f9bc9b36a9bd3757365d4175821a80bc00728d"
+
+rails:
+  port: 3000
+
+serviceAccount:
+  name: avx
+  annotations: {}
+  pullSecrets: []
+  #  - ecr-registry-helper
+
+service:
+  name: avx
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: nginx
+  hostname: example.localhost
+  secretName: avx-tls
+  tls: true
+  annotations: {}
+
+podAnnotations: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 300Mi
+  requests:
+    cpu: 50m
+    memory: 200Mi
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# Not implemented yet
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+persistence:
+  enabled: false
+  size: 1Gi
+  storageClass: ""
+
+# Not implemented yet, since not happy about the implementation. should be done in root chart
+dockerconfig:
+  enabled: false
