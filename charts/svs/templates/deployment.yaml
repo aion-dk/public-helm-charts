@@ -51,6 +51,7 @@ spec:
           {{- toYaml .Values.resources | nindent 12 }}
       - name: redis
         imagePullPolicy: IfNotPresent
+        image: redis:6
         ports:
         - containerPort: 6379
           protocol: TCP
