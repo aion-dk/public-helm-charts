@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "svs.labels" . | nindent 4 }}
+  name: svs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "svs.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "svs.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+      - name: svs
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: ["/bin/sh", "-c"]
+        args: ["bundle exec rails s -b '0.0.0.0' -p {{ .Values.rails.port }}"]
+        imagePullPolicy: Always
+        ports:
+          - name: http
+            protocol: TCP
+            containerPort: {{ .Values.rails.port }}
+        {{- if not .Values.global.init }}
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        {{- end }}
+      - name: redis
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi
+        env:
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+        - name: PORT
+          value: {{ .Values.rails.port }}
+        - name: REDIS_URL
+          value: "redis://localhost:6379"
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}

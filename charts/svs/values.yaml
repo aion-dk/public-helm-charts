@@ -1,0 +1,97 @@
+global:
+  storageClass: default
+  # is the system in init mode.
+  # means the init container that do migrate will not run
+  # so you can get rails c for seed etc
+  init: false
+  environment: development
+
+nameOverride: ""
+fullnameOverride: ""
+hostname: example.localhost
+
+replicaCount: 1
+
+image:
+  repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/svs-api
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: dev-ec9e4ef1f86678f87fc8b7cc39507065fdaa7da9
+
+rails:
+  port: 3020
+
+serviceAccount:
+  name: svs
+  annotations: {}
+  pullSecrets: []
+  #  - ecr-registry-helper
+
+service:
+  name: svs
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: nginx
+  hostname: example.localhost
+  secretName: svs-tls
+  tls: true
+  annotations: {}
+
+podAnnotations: {}
+
+podSecurityContext:
+  {}
+  # fsGroup: 2000
+
+securityContext:
+  {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 300Mi
+  requests:
+    cpu: 50m
+    memory: 200Mi
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# Not implemented yet
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+persistence:
+  enabled: false
+  size: 1Gi
+  storageClass: ""
+
+# Not implemented yet, since not happy about the implementation. should be done in root chart
+dockerconfig:
+  enabled: false
