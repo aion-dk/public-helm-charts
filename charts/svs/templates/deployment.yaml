@@ -44,7 +44,7 @@ spec:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
         - name: PORT
-          value: {{ .Values.rails.port }}
+          value: {{ .Values.rails.port | quote }}
         - name: REDIS_URL
           value: "redis://localhost:6379"
         resources:
