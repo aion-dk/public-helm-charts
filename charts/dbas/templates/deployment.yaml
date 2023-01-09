@@ -40,24 +40,12 @@ spec:
             path: /ping
             port: http
         {{- end }}
-        volumeMounts:
-        - mountPath: /usr/src/app/uploads/
-          name: uploads
         env:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
         - name: REACT_APP_BASE_ELECTION_URL
-          value: "https://dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+          value: "https://dbb.{{ .Values.global.projectHostname }}"
         - name: REACT_APP_STRICT
           value: "false"
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
-      volumes:
-      - name: uploads
-        {{- if .Values.persistence.enabled }}
-        persistentVolumeClaim:
-          claimName: dbas-uploads
-        {{- else }}
-        emptyDir:
-          sizeLimit: {{ .Values.persistence.size }}
-        {{- end }}

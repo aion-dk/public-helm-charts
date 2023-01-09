@@ -5,6 +5,8 @@ global:
   # so you can get rails c for seed etc
   init: false
   environment: development
+  project: demo
+  projectHostname: demo.assembly-voting.com
 
 nameOverride: ""
 fullnameOverride: ""
