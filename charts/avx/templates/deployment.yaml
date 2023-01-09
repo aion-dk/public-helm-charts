@@ -58,7 +58,15 @@ spec:
       - name: avx
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         command: ["bin/docker-entrypoint"]
-        args: ["bundle exec rails s -b '0.0.0.0' -p {{ .Values.rails.port }}"]
+        args:
+          - "bundle"
+          - "exec"
+          - "rails"
+          - "s"
+          - "-b"
+          - "0.0.0.0"
+          - "-p"
+          - {{ .Values.rails.port | quote }}
         imagePullPolicy: Always
         ports:
           - name: http
