@@ -459,6 +459,17 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/otp-0.1.0/otp-0.1.0.tgz
     version: 0.1.0
+  svs:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2023-01-09T10:26:46.805747947Z"
+    description: A Helm chart for Kubernetes
+    digest: 325e7d2fcee37aa8b7b0713c6388157d884fe310b67b048539a22e3d36ede3e8
+    name: svs
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/svs-0.1.0/svs-0.1.0.tgz
+    version: 0.1.0
   us:
   - annotations:
       artifacthub.io/changes: |
@@ -549,4 +560,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/va-0.1.0/va-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-09T07:45:23.411030559Z"
+generated: "2023-01-09T10:26:46.959953113Z"
