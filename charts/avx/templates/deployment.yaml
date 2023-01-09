@@ -89,7 +89,7 @@ spec:
         - name: AVX_SITE_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
-              key: private-key
+              key: privateKey
               name: avx-site-private-key
         - name: DB_HOST
           valueFrom:
@@ -154,7 +154,7 @@ spec:
         - name: AVX_SITE_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
-              key: private-key
+              key: privateKey
               name: avx-site-private-key
         - name: DB_HOST
           valueFrom:
