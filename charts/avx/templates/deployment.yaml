@@ -85,7 +85,7 @@ spec:
         - name: SKIP_TEST_DATABASE
           value: "true"
         - name: SECRET_KEY_BASE
-          value: {{ .Values.secretKeyBase }}
+          value: {{ .Values.secretKeyBase | quote }}
         - name: AVX_SITE_PRIVATE_KEY
           valueFrom:
             secretKeyRef:
