@@ -110,7 +110,11 @@ spec:
               key: password
               name: "{{ .Values.databaseCredentials.secret }}"
         - name: LOCKBOX_MASTER_KEY
-          value: {{ .Values.lockboxMasterKey | quote }}
+          valueFrom:
+            secretKeyRef:
+              key: lockboxMasterKey
+              name: "{{ .Values.databaseCredentials.secret }}"
+          # value: {{ .Values.lockboxMasterKey | quote }}
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
       {{- if not .Values.global.init }}
