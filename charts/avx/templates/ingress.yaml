@@ -1,6 +1,6 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "dbb.fullname" . -}}
-{{- $name := "dbb" -}}
+{{- $fullName := include "avx.fullname" . -}}
+{{- $name := "avx" -}}
 {{- $svcPort := .Values.service.port -}}
 {{- $svcName := .Values.service.name -}}
 {{- if and .Values.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
@@ -19,7 +19,7 @@ kind: Ingress
 metadata:
   name: {{ $name }}
   labels:
-    {{- include "dbb.labels" . | nindent 4 }}
+    {{- include "avx.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -32,7 +32,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.ingress.hostname | quote }}
-      secretName: dbb-tls
+      secretName: avx-tls
   {{- end }}
   rules:
     - host: {{ .Values.ingress.hostname | quote }}
