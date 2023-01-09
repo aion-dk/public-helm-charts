@@ -19,6 +19,8 @@ databaseCredentials:
   port: 3306
 
 replicaCount: 1
+lockboxMasterKey: "0000000000000000000000000000000000000000000000000000000000000000"
+secretKeyBase: "1" # RANDOM AUTORANDOM LATER IN SECRET
 
 image:
   repository: 534003348933.dkr.ecr.eu-west-1.amazonaws.com/dbb

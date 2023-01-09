@@ -109,6 +109,8 @@ spec:
             secretKeyRef:
               key: password
               name: "{{ .Values.databaseCredentials.secret }}"
+        - name: LOCKBOX_MASTER_KEY
+          value: {{ .Values.lockboxMasterKey | quote }}
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
       {{- if not .Values.global.init }}
@@ -144,7 +146,7 @@ spec:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
         - name: HOSTS
-          value: "localhost,dbb.avx.{{ .Release.Name }}.assemblyvoting.net"
+          value: "localhost,dbb.avx.{{  .Values.hostname }}"
         - name: EA_SITE_PUBLIC_KEY
           valueFrom:
             secretKeyRef:
@@ -152,7 +154,7 @@ spec:
               name: avx-site-public-key
         resources:
           requests:
-            cpu: 50m
+            cpu: 500m
             memory: 200Mi
           limits:
             cpu: 100m
