@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "vmb.labels" . | nindent 4 }}
+  name: vmb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "vmb.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "vmb.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name }}
+      containers:
+      - name: vmb
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: Always
+        ports:
+          - name: http
+            protocol: TCP
+            containerPort: {{ .Values.rails.port }}
+        {{- if not .Values.global.init }}
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: http
+        {{- end }}
+        env:
+        - name: REACT_APP_BASE_ELECTION_URL
+          value: "https://dbb.{{ .Values.global.projectHostname }}"
+        - name: NODE_ENV
+          value: {{ .Values.node.environment }}
+        - name: REACT_APP_STRICT
+          value: "false"
+        - name: REACT_APP_TIMEOUT_REMINDER_TIME
+          value: "5"
+        - name: REACT_APP_TIMEOUT_RETRIES
+          value: "30"
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      - name: redis
+        imagePullPolicy: IfNotPresent
+        image: redis:6
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 50m
+            memory: 50Mi
