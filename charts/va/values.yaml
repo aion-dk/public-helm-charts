@@ -6,6 +6,8 @@ global:
   init: false
   environment: development
   allowAllVoters: true
+  project: demo
+  projectHostname: demo.assembly-voting.com
 
 nameOverride: ""
 fullnameOverride: ""
@@ -21,7 +23,7 @@ databaseCredentials:
 
 voterRegistryApiKey: 5367566B58703273357638792F423F45
 lockboxMasterKey: "0000000000000000000000000000000000000000000000000000000000000000"
-secreKeyBase: "1" # RANDOM AUTORANDOM LATER IN SECRET
+secretKeyBase: "1" # RANDOM AUTORANDOM LATER IN SECRET
 
 replicaCount: 1
 
