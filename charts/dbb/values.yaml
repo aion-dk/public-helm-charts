@@ -19,7 +19,7 @@ databaseCredentials:
   port: 3306
 
 replicaCount: 1
-lockboxMasterKey: "0000000000000000000000000000000000000000000000000000000000000000"
+lockboxMasterKey: "" # openssl rand -hex 32, or helmchart will generate 1 if left
 secretKeyBase: "1" # RANDOM AUTORANDOM LATER IN SECRET
 
 image:

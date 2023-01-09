@@ -51,3 +51,26 @@ Selector labels
 app.kubernetes.io/name: {{ include "dbb.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+
+{{- define "dbb.randHex" -}}
+    {{- $result := "" }}
+    {{- range $i := until . }}
+        {{- $rand_hex_char := mod (randNumeric 4 | atoi) 16 | printf "%x" }}
+        {{- $result = print $result $rand_hex_char }}
+    {{- end }}
+    {{- $result }}
+{{- end }}
+
+{{- define "dbb.lockbox_master_key" -}}
+    {{- if .Values.lockboxMasterKey }}
+        {{- .Values.lockboxMasterKey }}
+    {{- else }}
+        {{- $k8s_state := lookup "v1" "Secret" .Release.Namespace .Values.databaseCredentials.secret | default (dict "data" (dict)) }}
+        {{- if hasKey $k8s_state.data "lockboxMasterKey" }}
+            {{- index $k8s_state.data "lockboxMasterKey" | b64dec }}
+        {{- else }}
+            {{- include "dbb.randHex" 64 }}
+        {{- end }}
+    {{- end }}
+{{- end }}
