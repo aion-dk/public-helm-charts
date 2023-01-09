@@ -40,6 +40,15 @@ spec:
             path: /ping
             port: http
         {{- end }}
+        env:
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+        - name: PORT
+          value: {{ .Values.rails.port }}
+        - name: REDIS_URL
+          value: "redis://localhost:6379"
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
       - name: redis
         imagePullPolicy: IfNotPresent
         ports:
@@ -52,12 +61,3 @@ spec:
           requests:
             cpu: 50m
             memory: 50Mi
-        env:
-        - name: RAILS_ENV
-          value: {{ .Values.global.environment }}
-        - name: PORT
-          value: {{ .Values.rails.port }}
-        - name: REDIS_URL
-          value: "redis://localhost:6379"
-        resources:
-          {{- toYaml .Values.resources | nindent 12 }}
