@@ -110,3 +110,8 @@ persistence:
 # Not implemented yet, since not happy about the implementation. should be done in root chart
 dockerconfig:
   enabled: false
+
+exports:
+  global:
+    otp:
+      endpoint: "https://otp.example.com:3000"

@@ -128,7 +128,9 @@ spec:
         - name: ASSET_SERVER_URL
           value: {{ .Values.env.assetsServer }}
         - name: PROVISIONER_API_URL
+          value: "null"
         - name: PROVISIONER_UI_URL
+          value: "null"
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
       {{- if not .Values.global.init }}
