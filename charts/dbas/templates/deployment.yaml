@@ -23,8 +23,8 @@ spec:
       containers:
         - name: dbas
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          command: ["/bin/sh", "-c"]
-          args: ["bundle exec rails s -b '0.0.0.0' -p {{ .Values.rails.port }}"]
+          # command: ["/bin/sh", "-c"]
+          # args: ["bundle exec rails s -b '0.0.0.0' -p {{ .Values.rails.port }}"]
           imagePullPolicy: Always
           ports:
             - name: http
