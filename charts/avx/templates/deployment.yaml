@@ -24,7 +24,7 @@ spec:
       initContainers:
       - name: avx-migrate
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        command: ["/bin/sh", "-c"]
+        command: ["bin/docker-entrypoint"]
         args: ["bundle exec rails db:migrate"]
         imagePullPolicy: Always
         volumeMounts:
@@ -57,7 +57,7 @@ spec:
       containers:
       - name: avx
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        command: ["/bin/sh", "-c"]
+        command: ["bin/docker-entrypoint"]
         args: ["bundle exec rails s -b '0.0.0.0' -p {{ .Values.rails.port }}"]
         imagePullPolicy: Always
         ports:
@@ -136,7 +136,7 @@ spec:
       {{- if not .Values.global.init }}
       - name: avx-jobs
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        command: ["/bin/sh", "-c"]
+        command: ["bin/docker-entrypoint"]
         args: ["bundle exec rails jobs:work"]
         imagePullPolicy: Always
         volumeMounts:
