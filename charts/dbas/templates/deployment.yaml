@@ -20,32 +20,32 @@ spec:
         {{- include "dbas.selectorLabels" . | nindent 8 }}
     spec:
       serviceAccountName: {{ .Values.serviceAccount.name }}
-         containers:
-      - name: dbas
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        command: ["/bin/sh", "-c"]
-        args: ["bundle exec rails s -b '0.0.0.0' -p {{ .Values.rails.port }}"]
-        imagePullPolicy: Always
-        ports:
-          - name: http
-            protocol: TCP
-            containerPort: {{ .Values.rails.port }}
-        {{- if not .Values.global.init }}
-        livenessProbe:
-          httpGet:
-            path: /ping
-            port: http
-        readinessProbe:
-          httpGet:
-            path: /ping
-            port: http
-        {{- end }}
-        env:
-        - name: RAILS_ENV
-          value: {{ .Values.global.environment }}
-        - name: REACT_APP_BASE_ELECTION_URL
-          value: "https://dbb.{{ .Values.global.projectHostname }}"
-        - name: REACT_APP_STRICT
-          value: "false"
-        resources:
-          {{- toYaml .Values.resources | nindent 12 }}
+      containers:
+        - name: dbas
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["/bin/sh", "-c"]
+          args: ["bundle exec rails s -b '0.0.0.0' -p {{ .Values.rails.port }}"]
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              protocol: TCP
+              containerPort: {{ .Values.rails.port }}
+          {{- if not .Values.global.init }}
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+          {{- end }}
+          env:
+          - name: RAILS_ENV
+            value: {{ .Values.global.environment }}
+          - name: REACT_APP_BASE_ELECTION_URL
+            value: "https://dbb.{{ .Values.global.projectHostname }}"
+          - name: REACT_APP_STRICT
+            value: "false"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
