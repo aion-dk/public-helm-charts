@@ -230,7 +230,7 @@ spec:
             memory: 200Mi
           limits:
             cpu: 1000m
-            memory: 100Mi
+            memory: 500Mi
       volumes:
       - name: site-data
         {{- if .Values.persistence.enabled }}
