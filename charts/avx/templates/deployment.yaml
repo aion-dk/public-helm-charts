@@ -222,8 +222,8 @@ spec:
           value: "null"
         resources:
           requests:
-            cpu: 100m
-            memory: 400Mi
+            cpu: 50m
+            memory: 200Mi
           limits:
             cpu: 100m
             memory: 300Mi
