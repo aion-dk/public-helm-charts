@@ -133,7 +133,7 @@ spec:
         - name: DBB_URL
           value: "https://dbb.{{ .Values.global.projectHostname }}"
         - name: SVS_URL
-          value: https://svs.{{ .Values.global.projectHostname }}"
+          value: "https://svs.{{ .Values.global.projectHostname }}"
         - name: OTP_PROVIDER_URL
           value: "https://otp.{{ .Values.global.projectHostname }}"
         - name: VOTER_AUTHORIZER_URL
@@ -208,7 +208,7 @@ spec:
         - name: DBB_URL
           value: "https://dbb.{{ .Values.global.projectHostname }}"
         - name: SVS_URL
-          value: https://svs.{{ .Values.global.projectHostname }}"
+          value: "https://svs.{{ .Values.global.projectHostname }}"
         - name: OTP_PROVIDER_URL
           value: "https://otp.{{ .Values.global.projectHostname }}"
         - name: VOTER_AUTHORIZER_URL
