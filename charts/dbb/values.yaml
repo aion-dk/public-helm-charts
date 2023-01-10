@@ -5,10 +5,12 @@ global:
   # so you can get rails c for seed etc
   init: false
   environment: development
+  project: demoProject
+  projectHostname: ""
 
 nameOverride: ""
 fullnameOverride: ""
-hostname: example.localhost
+hostname: "" # if not set will autogenerate from global.projectHostname
 
 databaseCredentials:
   secret: dbb-database-credentials
@@ -45,7 +47,7 @@ service:
 ingress:
   enabled: false
   className: nginx
-  hostname: example.localhost
+  # hostname: ""
   secretName: dbb-tls
   tls: true
   annotations: {}

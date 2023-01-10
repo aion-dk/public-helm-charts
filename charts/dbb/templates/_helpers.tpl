@@ -52,6 +52,16 @@ app.kubernetes.io/name: {{ include "dbb.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{- define "dbb.hostname" -}}
+  {{- $hostname := "" }}
+  {{- if .Values.hostname }}
+    {{- .Values.hostname }}
+  {{- else if .Values.global.projectHostname }}
+    {{- printf "%s.%s" "dbb" .Values.global.projectHostname }}
+  {{- else }}
+    {{- required "value for .Values.hostname or .Values.global.projectHostname" "" }}
+  {{- end }}
+{{- end }}
 
 {{- define "dbb.randHex" -}}
     {{- $result := "" }}
