@@ -155,7 +155,6 @@ spec:
           value: "null"
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
-      {{- if not .Values.global.init }}
       - name: avx-jobs
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         command: ["bin/docker-entrypoint"]
@@ -223,12 +222,11 @@ spec:
           value: "null"
         resources:
           requests:
-            cpu: 50m
-            memory: 200Mi
+            cpu: 100m
+            memory: 400Mi
           limits:
             cpu: 100m
             memory: 300Mi
-      {{- end }}
       volumes:
       - name: site-data
         {{- if .Values.persistence.enabled }}
