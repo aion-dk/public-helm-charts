@@ -31,11 +31,11 @@ spec:
   {{- if .Values.ingress.tls }}
   tls:
     - hosts:
-        - {{ include "dbb.hostname" . | quote }}
+        - {{ include "avx.hostname" . | quote }}
       secretName: avx-tls
   {{- end }}
   rules:
-    - host: {{ include "dbb.hostname" . | quote }}
+    - host: {{ include "avx.hostname" . | quote }}
       http:
         paths:
         - path: /
