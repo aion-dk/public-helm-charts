@@ -31,6 +31,17 @@ spec:
         - mountPath: /usr/src/app/uploads/
           name: uploads
         env:
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+        - name: HOSTS
+          value: "localhost,{{ include "dbb.hostname" . }}"
+        - name: SKIP_TEST_DATABASE
+          value: "true"
+        - name: EA_SITE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: publicKey
+              name: avx-site-public-key
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
@@ -51,8 +62,11 @@ spec:
             secretKeyRef:
               key: password
               name: "{{ .Values.databaseCredentials.secret }}"
-        - name: RAILS_ENV
-          value: {{ .Values.global.environment }}
+        - name: LOCKBOX_MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              key: lockboxMasterKey
+              name: "{{ .Values.databaseCredentials.secret }}"
       {{- end }}
       containers:
       - name: dbb
@@ -81,7 +95,7 @@ spec:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
         - name: HOSTS
-          value: "localhost,{{ .Values.hostname }}"
+          value: "localhost,{{ include "dbb.hostname" . }}"
         - name: SKIP_TEST_DATABASE
           value: "true"
         - name: EA_SITE_PUBLIC_KEY
@@ -127,6 +141,17 @@ spec:
         - mountPath: /usr/src/app/uploads/
           name: uploads
         env:
+        - name: RAILS_ENV
+          value: {{ .Values.global.environment }}
+        - name: HOSTS
+          value: "localhost,{{ include "dbb.hostname" . }}"
+        - name: SKIP_TEST_DATABASE
+          value: "true"
+        - name: EA_SITE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              key: publicKey
+              name: avx-site-public-key
         - name: DB_HOST
           valueFrom:
             secretKeyRef:
@@ -147,15 +172,11 @@ spec:
             secretKeyRef:
               key: password
               name: "{{ .Values.databaseCredentials.secret }}"
-        - name: RAILS_ENV
-          value: {{ .Values.global.environment }}
-        - name: HOSTS
-          value: "localhost,dbb.avx.{{  .Values.hostname }}"
-        - name: EA_SITE_PUBLIC_KEY
+        - name: LOCKBOX_MASTER_KEY
           valueFrom:
             secretKeyRef:
-              key: publicKey
-              name: avx-site-public-key
+              key: lockboxMasterKey
+              name: "{{ .Values.databaseCredentials.secret }}"
         resources:
           requests:
             cpu: 500m
