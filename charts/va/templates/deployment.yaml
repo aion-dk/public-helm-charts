@@ -129,51 +129,6 @@ spec:
               name: "{{ .Values.databaseCredentials.secret }}"
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
-      - name: va-jobs
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        command: ["/bin/sh", "-c"]
-        args: ["bundle exec rails jobs:work"]
-        imagePullPolicy: Always
-        volumeMounts:
-        - mountPath: /usr/src/app/uploads/
-          name: uploads
-        env:
-        - name: DB_HOST
-          valueFrom:
-            secretKeyRef:
-              key: host
-              name: "{{ .Values.databaseCredentials.secret }}"
-        - name: DB_PORT
-          valueFrom:
-            secretKeyRef:
-              key: port
-              name: "{{ .Values.databaseCredentials.secret }}"
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              key: username
-              name: "{{ .Values.databaseCredentials.secret }}"
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: password
-              name: "{{ .Values.databaseCredentials.secret }}"
-        - name: RAILS_ENV
-          value: {{ .Values.global.environment }}
-        - name: HOSTS
-          value: "localhost,va.avx.{{ .Release.Name }}.assemblyvoting.net"
-        - name: EA_SITE_PUBLIC_KEY
-          valueFrom:
-            secretKeyRef:
-              key: publicKey
-              name: avx-site-public-key
-        resources:
-          requests:
-            cpu: 50m
-            memory: 200Mi
-          limits:
-            cpu: 100m
-            memory: 300Mi
       volumes:
       - name: uploads
         {{- if .Values.persistence.enabled }}
