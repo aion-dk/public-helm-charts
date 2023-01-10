@@ -53,6 +53,8 @@ spec:
               name: "{{ .Values.databaseCredentials.secret }}"
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
+        - name: HOSTS
+          value: "localhost,{{ include "avx.hostname" . }}"
         - name: LOCKBOX_MASTER_KEY
           valueFrom:
             secretKeyRef:
@@ -98,7 +100,7 @@ spec:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
         - name: HOSTS
-          value: "localhost,{{ .Values.hostname }}"
+          value: "localhost,{{ include "avx.hostname" . }}"
         - name: SKIP_TEST_DATABASE
           value: "true"
         - name: SECRET_KEY_BASE
@@ -166,7 +168,7 @@ spec:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
         - name: HOSTS
-          value: "localhost,{{ .Values.hostname }}"
+          value: "localhost,{{ include "avx.hostname" . }}"
         - name: SKIP_TEST_DATABASE
           value: "true"
         - name: SECRET_KEY_BASE
