@@ -129,7 +129,6 @@ spec:
               name: "{{ .Values.databaseCredentials.secret }}"
         resources:
           {{- toYaml .Values.resources | nindent 12 }}
-      {{- if not .Values.global.init }}
       - name: va-jobs
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         command: ["/bin/sh", "-c"]
@@ -175,7 +174,6 @@ spec:
           limits:
             cpu: 100m
             memory: 300Mi
-      {{- end }}
       volumes:
       - name: uploads
         {{- if .Values.persistence.enabled }}
