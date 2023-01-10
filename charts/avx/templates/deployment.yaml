@@ -160,6 +160,7 @@ spec:
         command: ["bin/docker-entrypoint"]
         args: ["bundle exec rails jobs:work"]
         imagePullPolicy: Always
+        volumeMounts:
         - mountPath: /usr/src/app/public/uploads/
           name: site-data
           subPath: uploads
