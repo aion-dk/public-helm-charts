@@ -5,12 +5,12 @@ global:
   # so you can get rails c for seed etc
   init: false
   environment: development
-  project: dev-us-tmp
-  projectHostname: dev-us-tmp.assembly-voting.com
+  project: demoProject
+  projectHostname: ""
 
 nameOverride: ""
 fullnameOverride: ""
-hostname: example.localhost
+hostname: ""
 
 databaseCredentials:
   secret: avx-database-credentials
@@ -21,7 +21,7 @@ databaseCredentials:
   port: 3306
 
 voterRegistryApiKey: 5367566B58703273357638792F423F45
-lockboxMasterKey: "0000000000000000000000000000000000000000000000000000000000000000"
+lockboxMasterKey: ""
 secretKeyBase: "1" # RANDOM AUTORANDOM LATER IN SECRET
 
 env:
@@ -31,6 +31,7 @@ env:
   # voterAuthUrl: https://va.avx.dev-us-1.assemblyvoting.net
   # usAvxHost: https://eo.avx.dev-us-1.assemblyvoting.net
   assetsServer: https://assets.demo.assembly-voting.com
+
 replicaCount: 1
 
 image:
@@ -56,7 +57,7 @@ service:
 ingress:
   enabled: false
   className: nginx
-  hostname: example.localhost
+  # hostname: example.localhost
   secretName: avx-tls
   tls: true
   annotations: {}

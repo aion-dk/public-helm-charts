@@ -53,6 +53,11 @@ spec:
               name: "{{ .Values.databaseCredentials.secret }}"
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
+        - name: LOCKBOX_MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              key: lockboxMasterKey
+              name: "{{ .Values.databaseCredentials.secret }}"
       {{- end }}
       containers:
       - name: avx
@@ -83,8 +88,12 @@ spec:
             port: http
         {{- end }}
         volumeMounts:
-        - mountPath: /usr/src/app/uploads/
-          name: uploads
+        - mountPath: /usr/src/app/public/uploads/
+          name: site-data
+          subPath: uploads
+        - mountPath: /usr/src/app/public/packs/
+          name: site-data
+          subPath: packs
         env:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
@@ -130,7 +139,10 @@ spec:
         - name: US_AVX_HOST
           value: "avx.{{ .Values.global.projectHostname }}"
         - name: LOCKBOX_MASTER_KEY
-          value: {{ .Values.lockboxMasterKey | quote}}
+          valueFrom:
+            secretKeyRef:
+              key: lockboxMasterKey
+              name: "{{ .Values.databaseCredentials.secret }}"
         - name: WEBPACK_PRECOMPILE
           value: "true"
         - name: ASSET_SERVER_URL
@@ -195,7 +207,10 @@ spec:
         - name: US_AVX_HOST
           value: "https://avx.{{ .Values.global.projectHostname }}"
         - name: LOCKBOX_MASTER_KEY
-          value: {{ .Values.lockboxMasterKey | quote}}
+          valueFrom:
+            secretKeyRef:
+              key: lockboxMasterKey
+              name: "{{ .Values.databaseCredentials.secret }}"
         - name: WEBPACK_PRECOMPILE
           value: "true"
         - name: ASSET_SERVER_URL
@@ -213,10 +228,10 @@ spec:
             memory: 300Mi
       {{- end }}
       volumes:
-      - name: uploads
+      - name: site-data
         {{- if .Values.persistence.enabled }}
         persistentVolumeClaim:
-          claimName: dbb-uploads
+          claimName: avx-data
         {{- else }}
         emptyDir:
           sizeLimit: {{ .Values.persistence.size }}

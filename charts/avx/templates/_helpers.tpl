@@ -51,3 +51,37 @@ Selector labels
 app.kubernetes.io/name: {{ include "avx.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
+
+
+{{- define "avx.hostname" -}}
+  {{- $hostname := "" }}
+  {{- if .Values.hostname }}
+    {{- .Values.hostname }}
+  {{- else if .Values.global.projectHostname }}
+    {{- printf "%s.%s" "avx" .Values.global.projectHostname }}
+  {{- else }}
+    {{- required "value for .Values.hostname or .Values.global.projectHostname" "" }}
+  {{- end }}
+{{- end }}
+
+{{- define "avx.randHex" -}}
+    {{- $result := "" }}
+    {{- range $i := until . }}
+        {{- $rand_hex_char := mod (randNumeric 4 | atoi) 16 | printf "%x" }}
+        {{- $result = print $result $rand_hex_char }}
+    {{- end }}
+    {{- $result }}
+{{- end }}
+
+{{- define "avx.lockbox_master_key" -}}
+    {{- if .Values.lockboxMasterKey }}
+        {{- .Values.lockboxMasterKey }}
+    {{- else }}
+        {{- $k8s_state := lookup "v1" "Secret" .Release.Namespace .Values.databaseCredentials.secret | default (dict "data" (dict)) }}
+        {{- if hasKey $k8s_state.data "lockboxMasterKey" }}
+            {{- index $k8s_state.data "lockboxMasterKey" | b64dec }}
+        {{- else }}
+            {{- include "avx.randHex" 64 }}
+        {{- end }}
+    {{- end }}
+{{- end }}
