@@ -112,6 +112,7 @@ affinity: {}
 persistence:
   enabled: false
   size: 1Gi
+  #  accessMode: ReadWriteOnce
   storageClass: ""
 
 # Not implemented yet, since not happy about the implementation. should be done in root chart
