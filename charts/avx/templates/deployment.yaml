@@ -5,7 +5,7 @@ metadata:
     {{- include "avx.labels" . | nindent 4 }}
   name: avx
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
       {{- include "avx.selectorLabels" . | nindent 6 }}
@@ -29,7 +29,7 @@ spec:
         imagePullPolicy: Always
         volumeMounts:
         - mountPath: /usr/src/app/uploads/
-          name: uploads
+          name: site-data
         env:
         - name: DB_HOST
           valueFrom:

@@ -5,7 +5,7 @@ metadata:
     {{- include "dbb.labels" . | nindent 4 }}
   name: dbb
 spec:
-  replicas: 1
+  replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
       {{- include "dbb.selectorLabels" . | nindent 6 }}
@@ -29,7 +29,7 @@ spec:
         imagePullPolicy: Always
         volumeMounts:
         - mountPath: /usr/src/app/uploads/
-          name: uploads
+          name: site-data
         env:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
@@ -90,7 +90,7 @@ spec:
         {{- end }}
         volumeMounts:
         - mountPath: /usr/src/app/uploads/
-          name: uploads
+          name: site-data
         env:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
@@ -138,7 +138,7 @@ spec:
         imagePullPolicy: Always
         volumeMounts:
         - mountPath: /usr/src/app/uploads/
-          name: uploads
+          name: site-data
         env:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
@@ -184,10 +184,10 @@ spec:
             cpu: 300m
             memory: 400Mi
       volumes:
-      - name: uploads
+      - name: site-data
         {{- if .Values.persistence.enabled }}
         persistentVolumeClaim:
-          claimName: dbb-uploads
+          claimName: dbb-data
         {{- else }}
         emptyDir:
           sizeLimit: {{ .Values.persistence.size }}
