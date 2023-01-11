@@ -4,6 +4,11 @@ apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
   name: ecr-pull-request
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "2"
   labels:
     {{- include "ecr-pull-secret.labels" . | nindent 4 }}
 spec:
