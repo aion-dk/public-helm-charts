@@ -191,6 +191,19 @@ entries:
   - annotations:
       artifacthub.io/changes: |
         - kind: changes
+          description: "Change to be preinstall"
+    apiVersion: v2
+    created: "2023-01-11T06:51:20.745466752Z"
+    description: A Helm chart for Kubernetes
+    digest: 3fa198bb9c2355ef5b33a08f3632c02c80fe3d54229d2591f7c2270577b967eb
+    name: ecr-pull-secret
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/ecr-pull-secret-0.2.2/ecr-pull-secret-0.2.2.tgz
+    version: 0.2.2
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changes
           description: "Rename job name"
     apiVersion: v2
     created: "2023-01-03T11:43:53.134936299Z"
@@ -571,4 +584,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/vmb-0.1.0/vmb-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-09T11:10:30.604232166Z"
+generated: "2023-01-11T06:51:21.191901128Z"
