@@ -1,5 +1,4 @@
 # Service account
-
 apiVersion: v1
 kind: ServiceAccount
 metadata:

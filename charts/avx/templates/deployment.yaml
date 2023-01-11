@@ -92,10 +92,6 @@ spec:
         volumeMounts:
         - mountPath: /usr/src/app/public/uploads/
           name: site-data
-          subPath: uploads
-        - mountPath: /usr/src/app/public/packs/
-          name: site-data
-          subPath: packs
         env:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
@@ -167,10 +163,6 @@ spec:
         volumeMounts:
         - mountPath: /usr/src/app/public/uploads/
           name: site-data
-          subPath: uploads
-        - mountPath: /usr/src/app/public/packs/
-          name: site-data
-          subPath: packs
         env:
         - name: RAILS_ENV
           value: {{ .Values.global.environment }}
