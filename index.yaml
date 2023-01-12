@@ -193,6 +193,19 @@ entries:
         - kind: changes
           description: "typo in metadata fixed. annotations was with wrong indent"
     apiVersion: v2
+    created: "2023-01-12T11:33:52.768867449Z"
+    description: A Helm chart for Kubernetes
+    digest: 9ef910ec9dfef98a9849581262c7f9b2315f639b6b1a2b746d72b91d51f922f3
+    name: ecr-pull-secret
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/ecr-pull-secret-0.2.4/ecr-pull-secret-0.2.4.tgz
+    version: 0.2.4
+  - annotations:
+      artifacthub.io/changes: |
+        - kind: changes
+          description: "typo in metadata fixed. annotations was with wrong indent"
+    apiVersion: v2
     created: "2023-01-11T11:59:56.849627254Z"
     description: A Helm chart for Kubernetes
     digest: 014a8637ef95a159a2613ba8078797dfb2f3ae0be7d39857dea04f0f59a19f1e
@@ -608,4 +621,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/vmb-0.1.0/vmb-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-12T11:13:18.751147824Z"
+generated: "2023-01-12T11:33:52.769250029Z"
