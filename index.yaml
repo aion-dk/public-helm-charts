@@ -485,6 +485,17 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/otp-0.1.0/otp-0.1.0.tgz
     version: 0.1.0
+  redis:
+  - apiVersion: v2
+    appVersion: 1.16.0
+    created: "2023-01-12T11:13:18.751018323Z"
+    description: A Helm chart for Kubernetes
+    digest: 4b1c9c96aa11bdc51c2c38fbdfabe0cfbdc6bc5fb1d12d6ebe60d744444449d3
+    name: redis
+    type: application
+    urls:
+    - https://github.com/aion-dk/public-helm-charts/releases/download/redis-0.1.0/redis-0.1.0.tgz
+    version: 0.1.0
   svs:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -597,4 +608,4 @@ entries:
     urls:
     - https://github.com/aion-dk/public-helm-charts/releases/download/vmb-0.1.0/vmb-0.1.0.tgz
     version: 0.1.0
-generated: "2023-01-11T11:59:56.849781254Z"
+generated: "2023-01-12T11:13:18.751147824Z"
